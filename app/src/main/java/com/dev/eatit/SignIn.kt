@@ -1,6 +1,7 @@
 package com.dev.eatit
 
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import android.renderscript.Sampler
 import android.widget.Button
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.FirebaseDatabase
 import android.view.View
 import android.widget.Toast
+import com.dev.eatit.common.Common
 import com.dev.eatit.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -44,8 +46,12 @@ class SignIn : AppCompatActivity(){
                             var user = p0.child(edtPhone.text.toString()).getValue(User::class.java)
 
                             if (user!!.password.equals(edtPassword.text.toString()))
-                                Toast.makeText(
-                                    this@SignIn,"Login Success", Toast.LENGTH_LONG).show()
+                            {
+                                var homeIntent = Intent(this@SignIn, Home::class.java)
+                                Common.currentUser = user
+                                startActivity(homeIntent)
+                                finish()
+                            }
                             else
                                 Toast.makeText(
                                     this@SignIn,"Login failed!!", Toast.LENGTH_LONG).show()
