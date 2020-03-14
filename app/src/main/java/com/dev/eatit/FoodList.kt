@@ -1,5 +1,6 @@
 package com.dev.eatit
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -67,7 +68,11 @@ class FoodList : AppCompatActivity() {
 
                 foodViewHolder?.setItemClickListener(object : ItemClickListener{
                     override fun onClick(view: View, position: Int, isLongClick: Boolean) {
-                        Toast.makeText(this@FoodList, "" + food?.name, Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@FoodList, ""+position , Toast.LENGTH_LONG).show()
+
+                        var foodDetail = Intent(this@FoodList, FoodDeatils::class.java)
+                        foodDetail.putExtra("foodId", adapter?.getRef(position)?.key)
+                        startActivity(foodDetail)
                     }
                 })
             }
