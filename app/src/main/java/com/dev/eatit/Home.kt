@@ -1,5 +1,6 @@
 package com.dev.eatit
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dev.eatit.ViewHolder.MenuViewHolder
 import com.dev.eatit.common.Common
 import com.dev.eatit.model.Category
+import com.dev.eatit.model.Food
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -33,6 +35,8 @@ class Home : AppCompatActivity() {
 
     lateinit var recycler_menu : RecyclerView
     lateinit var layoutManager : RecyclerView.LayoutManager
+    var adapter: FirebaseRecyclerAdapter<Category, MenuViewHolder>? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,7 +84,9 @@ class Home : AppCompatActivity() {
     }
 
     fun loadMenu(){
-        var adapter = object : FirebaseRecyclerAdapter<Category, MenuViewHolder>(Category::class.java, R.layout.menu_item, MenuViewHolder::class.java, category) {
+
+
+        adapter = object : FirebaseRecyclerAdapter<Category, MenuViewHolder>(Category::class.java, R.layout.menu_item, MenuViewHolder::class.java, category) {
             override fun populateViewHolder(viewHolder: MenuViewHolder?, model: Category?, position: Int) {
                 viewHolder?.txtMenuName?.setText(model?.name)
                 Picasso.get().load(model?.image).into(viewHolder?.imageView)
@@ -89,7 +95,11 @@ class Home : AppCompatActivity() {
                 viewHolder?.setItemClickListener(object :
                     ItemClickListener {
                     override fun onClick(view: View, position: Int, isLongClick: Boolean) {
-                        Toast.makeText(this@Home, "" + clickItem.name, Toast.LENGTH_LONG).show()
+                        //클릭 시 새 activity에 menuId를 보내 줌
+                        var menuIdIntent = Intent(this@Home, FoodList::class.java)
+                        menuIdIntent.putExtra("CategoryId", adapter?.getRef(position)?.key)
+                        startActivity(menuIdIntent);
+                        //Toast.makeText(this@Home, "" + clickItem.name, Toast.LENGTH_LONG).show()
                     }
                 })
             }
