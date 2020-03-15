@@ -3,11 +3,15 @@ package com.dev.eatit
 import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
+import com.dev.eatit.database.Database
 import com.dev.eatit.model.Food
+import com.dev.eatit.model.Order
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.*
@@ -27,7 +31,7 @@ class FoodDeatils : AppCompatActivity() {
 
     lateinit var database : FirebaseDatabase
     lateinit var food : DatabaseReference
-
+    lateinit var currentFood : Food
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_food_deatils)
@@ -37,6 +41,8 @@ class FoodDeatils : AppCompatActivity() {
 
         numberButton = findViewById(R.id.number_button)
         btnCart = findViewById(R.id.btnCart)
+
+
 
         food_name = findViewById(R.id.food_detail_name)
         food_price = findViewById(R.id.food_detail_price)
@@ -53,17 +59,32 @@ class FoodDeatils : AppCompatActivity() {
         if(!foodId.isEmpty()){
             getDetailFood(foodId)
         }
+
+        btnCart.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                Database(baseContext).addCart(
+                    Order(
+                        foodId,
+                        currentFood.name,
+                        numberButton.number,
+                        currentFood.price,
+                        currentFood.discount
+                    )
+                )
+                Toast.makeText(this@FoodDeatils, "Added to Cart", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     private fun getDetailFood(foodId : String){
         food.child(foodId).addValueEventListener(object : ValueEventListener{
             override fun onDataChange(dataSnapShot: DataSnapshot) {
-                var food = dataSnapShot.getValue(Food::class.java)
-                Picasso.get().load(food?.image).into(food_image)
-                collapsingToolbarLayout.title = food?.name
-                food_price.setText(food?.price)
-                food_name.setText(food?.name)
-                food_description.setText(food?.description)
+                currentFood = dataSnapShot.getValue(Food::class.java)!!
+                Picasso.get().load(currentFood?.image).into(food_image)
+                collapsingToolbarLayout.title = currentFood?.name
+                food_price.setText(currentFood?.price)
+                food_name.setText(currentFood?.name)
+                food_description.setText(currentFood?.description)
 
             }
 

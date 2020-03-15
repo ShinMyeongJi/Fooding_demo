@@ -38,6 +38,9 @@ android {
 }
 
 dependencies {
+
+    def sqlite_version = "2.1.0"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -65,4 +68,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-database:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha01'
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation "androidx.sqlite:sqlite-ktx:$sqlite_version"
+    implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
+    implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 }

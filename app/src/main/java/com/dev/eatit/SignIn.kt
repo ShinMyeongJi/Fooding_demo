@@ -44,7 +44,7 @@ class SignIn : AppCompatActivity(){
                         if(p0.child(edtPhone.text.toString()).exists()) {
                             mDialog.dismiss()
                             var user = p0.child(edtPhone.text.toString()).getValue(User::class.java)
-
+                            user?.phone = edtPhone.text.toString()
                             if (user!!.password.equals(edtPassword.text.toString()))
                             {
                                 var homeIntent = Intent(this@SignIn, Home::class.java)
