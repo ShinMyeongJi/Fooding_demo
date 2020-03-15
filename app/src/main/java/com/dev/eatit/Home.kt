@@ -1,8 +1,10 @@
 package com.dev.eatit
 
 import android.content.Intent
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -13,6 +15,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dev.eatit.ViewHolder.MenuViewHolder
@@ -82,6 +85,33 @@ class Home : AppCompatActivity() {
         recycler_menu.layoutManager = layoutManager
 
         loadMenu()
+
+
+
+
+        navView.setNavigationItemSelectedListener(object : NavigationView.OnNavigationItemSelectedListener{
+            override fun onNavigationItemSelected(item: MenuItem): Boolean {
+                var id = item.itemId
+
+                if(id == R.id.nav_menu){
+
+                }else if(id == R.id.nav_cart){
+                    var cartIntent = Intent(this@Home, Cart::class.java)
+                    startActivity(cartIntent)
+                }else if(id == R.id.nav_orders){
+                    var orderIntent = Intent(this@Home, OrderStatus::class.java)
+                    startActivity(orderIntent)
+                }else if(id == R.id.logout){
+                    var signIn = Intent(this@Home, SignIn::class.java)
+                    signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    startActivity(signIn)
+                }
+
+                var drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+                drawer.closeDrawer(GravityCompat.START)
+                return true
+            }
+        })
     }
 
     fun loadMenu(){
@@ -119,4 +149,7 @@ class Home : AppCompatActivity() {
         //return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
         return false
     }
+
+
+
 }
