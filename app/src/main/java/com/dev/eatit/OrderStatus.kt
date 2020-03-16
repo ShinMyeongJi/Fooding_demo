@@ -37,19 +37,20 @@ class OrderStatus : AppCompatActivity() {
         recyclerView.layoutManager = layoutManager
 
         loadOrders(Common.currentUser.phone)
-        Log.d("phone ====", Common.currentUser.phone)
+        //.d("phone ====", requests.orderByChild("Phone").equalTo(Common.currentUser.phone).)
     }
 
     private fun loadOrders(phone : String){
+
+
         adapter = object : FirebaseRecyclerAdapter<Request, OrderViewHolder>(
             Request::class.java,
             R.layout.order_layout,
             OrderViewHolder::class.java,
-            requests.orderByChild("Phone").equalTo(phone)
+            requests.orderByChild("phone").equalTo(phone)
         ){
             override fun populateViewHolder(viewHolder: OrderViewHolder?, p1: Request?, p2: Int) {
                 viewHolder?.order_id?.setText(adapter.getRef(p2).key)
-                Log.d("status=====", p1?.status)
                 viewHolder?.order_status?.setText(convertCodeToStatus(p1?.status!!))
                 viewHolder?.order_address?.setText(p1?.address)
                 viewHolder?.order_phone?.setText(p1?.phone)

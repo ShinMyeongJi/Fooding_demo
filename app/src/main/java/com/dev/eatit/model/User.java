@@ -1,41 +1,40 @@
 package com.dev.eatit.model;
 
 public class User {
-    private String Name;
-    private String Password;
-    private String Phone;
+    private String name;
+    private String password;
+    private String phone;
 
 
     public User() {
     }
 
     public User(String name, String password) {
-        Name = name;
-        Password = password;
+        this.name = name;
+        this.password = password;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
     }
 
     public String getPhone() {
-        return Phone;
+        return phone;
     }
 
     public void setPhone(String phone) {
-        Phone = phone;
+        this.phone = phone;
     }
-
 }
