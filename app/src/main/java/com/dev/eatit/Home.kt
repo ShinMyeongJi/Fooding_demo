@@ -112,6 +112,11 @@ class Home : AppCompatActivity() {
                 return true
             }
         })
+
+        /*supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true);
+        supportActionBar?.setHomeButtonEnabled(true);*/
+
     }
 
     fun loadMenu(){
