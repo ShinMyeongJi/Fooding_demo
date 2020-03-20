@@ -63,9 +63,9 @@
             android:layout_height="wrap_content"
             android:text="SignUp"
             android:id="@+id/btnSignIn"
-            android:background="@color/btnSignActive"
+            android:background="@drawable/round_button"
             android:textColor="@android:color/white"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"/>
 

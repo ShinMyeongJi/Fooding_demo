@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:text="Sign Up"
             android:id="@+id/btnSignUp"
-            android:background="@color/btnSignUp"
+            android:background="@drawable/round_button"
             android:textColor="@android:color/white"
             android:layout_margin="8dp"
             android:layout_marginLeft="20dp"

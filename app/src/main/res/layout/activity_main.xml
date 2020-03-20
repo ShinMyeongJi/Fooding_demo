@@ -41,7 +41,7 @@
             android:layout_weight="1"
             android:text="SignUp"
             android:id="@+id/btnSignUp"
-            android:background="@color/btnSignUp"
+            android:background="@drawable/round_button"
             android:textColor="@android:color/white"
             android:layout_margin="8dp"/>
 
@@ -51,7 +51,7 @@
             android:layout_weight="1"
             android:text="SignIn"
             android:id="@+id/btnSignIn"
-            android:background="@color/btnSignActive"
+            android:background="@drawable/round_button"
             android:textColor="@android:color/white"
             android:layout_margin="8dp"/>
 
