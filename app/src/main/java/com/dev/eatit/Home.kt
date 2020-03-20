@@ -16,6 +16,9 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.ui.navigateUp
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dev.eatit.ViewHolder.MenuViewHolder
@@ -143,8 +146,8 @@ class Home : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        //val navController = findNavController(R.id.nav_host_fragment)
-        //return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+       // val navController = findNavController(R.id.nav_host_fragment)
+       // return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
         return false
     }
 

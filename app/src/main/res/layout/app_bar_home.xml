@@ -31,5 +31,4 @@
         android:tint="@android:color/white"
         app:srcCompat="@drawable/ic_shopping_cart_black_24dp"
         tools:ignore="VectorDrawableCompat" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
