@@ -115,8 +115,6 @@ class Home : AppCompatActivity() {
     }
 
     fun loadMenu(){
-
-
         adapter = object : FirebaseRecyclerAdapter<Category, MenuViewHolder>(Category::class.java, R.layout.menu_item, MenuViewHolder::class.java, category) {
             override fun populateViewHolder(viewHolder: MenuViewHolder?, model: Category?, position: Int) {
                 viewHolder?.txtMenuName?.setText(model?.name)

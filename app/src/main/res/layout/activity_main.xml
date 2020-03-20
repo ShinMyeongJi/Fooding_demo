@@ -14,9 +14,9 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="300dp"
-            android:layout_height="150dp"
-            android:background="@drawable/logo"></ImageView>
+            android:layout_width="250dp"
+            android:layout_height="125dp"
+            android:background="@drawable/fooding_logo"></ImageView>
 
         <TextView
             android:id="@+id/txtSlogan"

@@ -71,4 +71,5 @@ dependencies {
     implementation "androidx.sqlite:sqlite-ktx:$sqlite_version"
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.5'
 }
