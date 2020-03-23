@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dev.eatit.ViewHolder.MenuViewHolder
 import com.dev.eatit.common.Common
 import com.dev.eatit.model.Category
+import com.dev.eatit.service.ListenOrder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -81,6 +82,11 @@ class Home : AppCompatActivity() {
         recycler_menu.layoutManager = layoutManager
 
         loadMenu()
+
+        var service = Intent(this@Home, ListenOrder::class.java)
+        startService(service)
+
+
 
         navView.setNavigationItemSelectedListener(object : NavigationView.OnNavigationItemSelectedListener{
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
