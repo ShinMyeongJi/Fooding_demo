@@ -1,17 +1,15 @@
 package com.dev.eatit.service
 
-import android.app.Notification
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.dev.eatit.OrderStatus
 import com.dev.eatit.model.Request
-import com.google.android.gms.common.internal.service.Common
 import com.google.firebase.database.*
+
 
 class ListenOrder : Service(), ChildEventListener{
 
@@ -25,8 +23,8 @@ class ListenOrder : Service(), ChildEventListener{
         requests = database.getReference("Requests")
     }
 
-    override fun onBind(intent: Intent): IBinder {
-        TODO("Return the communication channel to the service.")
+    override fun onBind(intent: Intent): IBinder? {
+        return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -35,11 +33,11 @@ class ListenOrder : Service(), ChildEventListener{
     }
 
     override fun onCancelled(p0: DatabaseError) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun onChildChanged(p0: DataSnapshot, p1: String?) {
@@ -54,11 +52,26 @@ class ListenOrder : Service(), ChildEventListener{
         var contentIntent = PendingIntent.getActivity(baseContext, 0,
             intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        var builder = NotificationCompat.Builder(baseContext)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "foodStatus",
+                "foodStatus",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val notificationManager = getSystemService(
+                NotificationManager::class.java
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+
+
+        var builder = NotificationCompat.Builder(baseContext, "foodStatus")
         builder.setAutoCancel(true)
             .setDefaults(Notification.DEFAULT_ALL)
             .setWhen(System.currentTimeMillis())
             .setTicker("EDMTDev")
+            .setSmallIcon(R.drawable.notification_template_icon_bg)
             .setContentInfo("주문이 수정되었습니다.")
             .setContentText("주문 #" + key + " 가 " + convertCodeToStatus(request.status))
             .setContentIntent(contentIntent)
@@ -69,11 +82,11 @@ class ListenOrder : Service(), ChildEventListener{
     }
 
     override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun onChildRemoved(p0: DataSnapshot) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     fun convertCodeToStatus(code: String): String? {
