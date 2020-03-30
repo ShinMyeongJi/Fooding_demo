@@ -1,6 +1,7 @@
 package com.dev.eatit
 
 import android.media.Image
+import android.media.MicrophoneInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -8,12 +9,15 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
+import com.dev.eatit.common.Common
 import com.dev.eatit.database.Database
 import com.dev.eatit.model.Food
 import com.dev.eatit.model.Order
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 
@@ -26,6 +30,8 @@ class FoodDeatils : AppCompatActivity() {
     lateinit var collapsingToolbarLayout : CollapsingToolbarLayout
     lateinit var btnCart : FloatingActionButton
     lateinit var numberButton : ElegantNumberButton
+
+    lateinit var detailsLayout : CoordinatorLayout
 
     var foodId : String = ""
 
@@ -42,13 +48,13 @@ class FoodDeatils : AppCompatActivity() {
         numberButton = findViewById(R.id.number_button)
         btnCart = findViewById(R.id.btnCart)
 
-
-
         food_name = findViewById(R.id.food_detail_name)
         food_price = findViewById(R.id.food_detail_price)
         food_description = findViewById(R.id.food_detail_description)
         food_image = findViewById(R.id.food_detail_img)
         collapsingToolbarLayout = findViewById(R.id.collapsing)
+
+        detailsLayout = findViewById(R.id.detailsLayout)
 
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppbar)
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppbar)
@@ -57,7 +63,12 @@ class FoodDeatils : AppCompatActivity() {
             foodId = intent.getStringExtra("foodId")
         }
         if(!foodId.isEmpty()){
-            getDetailFood(foodId)
+            if(Common.isConnectedToInternet(this@FoodDeatils)) {
+                getDetailFood(foodId)
+            }else{
+                Snackbar.make(detailsLayout, "네트워크 연결을 확인해주세요.", Snackbar.LENGTH_SHORT).show()
+                return
+            }
         }
 
         btnCart.setOnClickListener(object : View.OnClickListener{

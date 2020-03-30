@@ -11,8 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dev.eatit.ViewHolder.FoodViewHolder
+import com.dev.eatit.common.Common
 import com.dev.eatit.model.Food
 import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import com.mancj.materialsearchbar.MaterialSearchBar
 import com.squareup.picasso.Picasso
@@ -53,7 +55,12 @@ class FoodList : AppCompatActivity() {
         }
 
         if(!categoryId.isEmpty() && categoryId != null){
-            loadListFood(categoryId)
+            if(Common.isConnectedToInternet(this@FoodList)){
+                loadListFood(categoryId)
+            }else{
+                Snackbar.make(recycler_food, "네트워크 연결을 확인해주세요.", Snackbar.LENGTH_SHORT).show()
+                return
+            }
         }
 
         searchBar = findViewById(R.id.searchBar)

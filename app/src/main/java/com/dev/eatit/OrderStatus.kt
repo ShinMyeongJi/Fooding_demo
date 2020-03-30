@@ -36,7 +36,11 @@ class OrderStatus : AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
 
-        loadOrders(Common.currentUser.phone)
+        if(intent == null) {
+            loadOrders(Common.currentUser.phone)
+        }else{
+            loadOrders(intent.getStringExtra("userPhone"))
+        }
         //.d("phone ====", requests.orderByChild("Phone").equalTo(Common.currentUser.phone).)
     }
 

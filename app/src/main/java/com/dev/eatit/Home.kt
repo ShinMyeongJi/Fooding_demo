@@ -28,6 +28,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.core.view.View
 import com.squareup.picasso.Picasso
+import io.paperdb.Paper
 
 class Home : AppCompatActivity() {
 
@@ -51,6 +52,7 @@ class Home : AppCompatActivity() {
         database = FirebaseDatabase.getInstance()
         category = database.getReference("Category")
 
+        Paper.init(this@Home)
 
         val fab: FloatingActionButton = findViewById(R.id.fab)
         fab.setOnClickListener { view ->
@@ -81,8 +83,12 @@ class Home : AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         recycler_menu.layoutManager = layoutManager
 
-        loadMenu()
-
+        if (Common.isConnectedToInternet(this@Home)) {
+            loadMenu()
+        }else{
+            Snackbar.make(recycler_menu, "네트워크 연결을 확인해주세요.", Snackbar.LENGTH_SHORT).show()
+            return
+        }
         var service = Intent(this@Home, ListenOrder::class.java)
         startService(service)
 
@@ -101,6 +107,10 @@ class Home : AppCompatActivity() {
                     var orderIntent = Intent(this@Home, OrderStatus::class.java)
                     startActivity(orderIntent)
                 }else if(id == R.id.logout){
+                    //자동 로그인 해제
+                    Paper.book().destroy()
+
+
                     var signIn = Intent(this@Home, SignIn::class.java)
                     signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     startActivity(signIn)
@@ -137,6 +147,15 @@ class Home : AppCompatActivity() {
         }
         recycler_menu.adapter = adapter
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == R.id.refresh){
+            loadMenu()
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.home, menu)

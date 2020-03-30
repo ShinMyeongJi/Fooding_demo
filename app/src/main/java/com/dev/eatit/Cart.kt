@@ -3,6 +3,7 @@ package com.dev.eatit
 import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -31,7 +32,7 @@ class Cart : AppCompatActivity() {
     lateinit var txtTotal : TextView
     lateinit var btnPlace : Button
 
-    lateinit var cart : List<Order>
+    lateinit var cart : ArrayList<Order>
     lateinit var adapter : CartAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,14 +54,20 @@ class Cart : AppCompatActivity() {
 
         btnPlace.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
-                showAlertDialog()
+                if(cart.size > 0) {
+                    showAlertDialog()
+                }else{
+
+                }
+
             }
         })
     }
 
     private fun loadListFood(){
-        cart = Database(this).cart
+        cart = Database(this).cart as ArrayList<Order>
         adapter = CartAdapter(cart, this)
+        adapter.notifyDataSetChanged()
         recyclerView.adapter = adapter
 
         var total = 0
@@ -114,4 +121,23 @@ class Cart : AppCompatActivity() {
         alertDialog.show()
     }
 
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        if(item.title.equals(Common.DELETE)){
+            deleteCart(item.order)
+        }
+        return true
+    }
+
+    private fun deleteCart(order : Int){
+        cart.removeAt(order)
+        var deleteDb = Database(this@Cart)
+        deleteDb.cleanCart()
+
+        for(item in cart){
+            var newDB = Database(this@Cart)
+            newDB.addCart(item)
+        }
+
+        loadListFood()
+    }
 }
