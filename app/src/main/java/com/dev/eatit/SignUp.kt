@@ -23,6 +23,7 @@ class SignUp : AppCompatActivity() {
     lateinit var edtPhone : MaterialEditText
     lateinit var edtName : MaterialEditText
     lateinit var edtPassword : MaterialEditText
+    lateinit var secureCode : MaterialEditText
 
     lateinit var btnSignUp : Button
 
@@ -36,6 +37,7 @@ class SignUp : AppCompatActivity() {
         edtPhone = findViewById(R.id.edtPhone)
         edtName = findViewById(R.id.edtName)
         edtPassword = findViewById(R.id.edtPassword)
+        secureCode = findViewById(R.id.secureCode)
 
         btnSignUp = findViewById(R.id.btnSignUp)
         signUpView = findViewById(R.id.signUpView)
@@ -65,7 +67,7 @@ class SignUp : AppCompatActivity() {
                             } else {
                                 mDialog.dismiss()
                                 var user =
-                                    User(edtName.text.toString(), edtPassword.text.toString())
+                                    User(edtName.text.toString(), edtPassword.text.toString(), secureCode.text.toString())
                                 table_user.child(edtPhone.text.toString()).setValue(user)
                                 Toast.makeText(
                                     this@SignUp,

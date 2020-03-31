@@ -16,6 +16,7 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="logout">Logout</string>
+    <string name="forgot_pwd">비밀번호 찾기</string>
 
     <string name="home_second">Home Second</string>
 </resources>
