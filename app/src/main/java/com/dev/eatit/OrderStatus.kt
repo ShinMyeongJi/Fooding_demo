@@ -55,7 +55,7 @@ class OrderStatus : AppCompatActivity() {
         ){
             override fun populateViewHolder(viewHolder: OrderViewHolder?, p1: Request?, p2: Int) {
                 viewHolder?.order_id?.setText(adapter.getRef(p2).key)
-                viewHolder?.order_status?.setText(convertCodeToStatus(p1?.status!!))
+                viewHolder?.order_status?.setText(Common.convertCodeToStatus(p1?.status!!))
                 viewHolder?.order_address?.setText(p1?.address)
                 viewHolder?.order_phone?.setText(p1?.phone)
             }
@@ -64,12 +64,5 @@ class OrderStatus : AppCompatActivity() {
         recyclerView.adapter = adapter
     }
 
-    private fun convertCodeToStatus(status : String): String {
-        if(status.equals("0"))
-            return "Placed"
-        else if(status.equals("1"))
-            return "Shipping"
-        else
-            return "Shipped"
-    }
+
 }

@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.dev.eatit.OrderStatus
+import com.dev.eatit.common.Common
 import com.dev.eatit.model.Request
 import com.google.firebase.database.*
 
@@ -73,7 +74,7 @@ class ListenOrder : Service(), ChildEventListener{
             .setTicker("EDMTDev")
             .setSmallIcon(R.drawable.notification_template_icon_bg)
             .setContentInfo("주문이 수정되었습니다.")
-            .setContentText("주문 #" + key + " 가 " + convertCodeToStatus(request.status))
+            .setContentText("주문 #" + key + " 가 " + Common.convertCodeToStatus(request.status))
             .setContentIntent(contentIntent)
             .setContentInfo("Info")
 
@@ -87,15 +88,5 @@ class ListenOrder : Service(), ChildEventListener{
 
     override fun onChildRemoved(p0: DataSnapshot) {
 
-    }
-
-    fun convertCodeToStatus(code: String): String? {
-        return if (code == "0") {
-            "준비 중"
-        } else if (code == "1") {
-            "배송 중"
-        } else {
-            "배송 완료"
-        }
     }
 }
