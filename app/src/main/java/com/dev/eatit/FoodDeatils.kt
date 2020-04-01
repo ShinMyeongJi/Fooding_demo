@@ -4,6 +4,7 @@ import android.media.Image
 import android.media.MicrophoneInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.View
 import android.widget.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -12,15 +13,18 @@ import com.dev.eatit.common.Common
 import com.dev.eatit.database.Database
 import com.dev.eatit.model.Food
 import com.dev.eatit.model.Order
+import com.dev.eatit.model.Rating
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import com.stepstone.apprating.AppRatingDialog
+import com.stepstone.apprating.listener.RatingDialogListener
 import kotlinx.android.synthetic.main.activity_food_deatils.*
+import java.util.*
 
-class FoodDeatils : AppCompatActivity() {
+class FoodDeatils : AppCompatActivity(), RatingDialogListener {
 
     lateinit var food_name : TextView
     lateinit var food_price : TextView
@@ -39,6 +43,8 @@ class FoodDeatils : AppCompatActivity() {
 
     lateinit var database : FirebaseDatabase
     lateinit var food : DatabaseReference
+    lateinit var ratingTbl : DatabaseReference
+
     lateinit var currentFood : Food
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +52,7 @@ class FoodDeatils : AppCompatActivity() {
 
         database = FirebaseDatabase.getInstance()
         food = database.getReference("Food")
+        ratingTbl = database.getReference("Rating")
 
         numberButton = findViewById(R.id.number_button)
         btnCart = findViewById(R.id.btnCart)
@@ -70,6 +77,7 @@ class FoodDeatils : AppCompatActivity() {
         if(!foodId.isEmpty()){
             if(Common.isConnectedToInternet(this@FoodDeatils)) {
                 getDetailFood(foodId)
+                getRatingFood(foodId)
             }else{
                 Snackbar.make(detailsLayout, "네트워크 연결을 확인해주세요.", Snackbar.LENGTH_SHORT).show()
                 return
@@ -120,5 +128,69 @@ class FoodDeatils : AppCompatActivity() {
         var ratingDialogBuilder = AppRatingDialog.Builder()
         ratingDialogBuilder.setPositiveButtonText("확인")
             .setNegativeButtonText("취소")
+            .setNoteDescriptions(Arrays.asList("매우 만족", "만족", "보통", "불만족", "매우 불만족"))
+            .setDefaultRating(1)
+            .setTitle("평점")
+            .setDescription("별점을 입력해주세요.")
+            .setTitleTextColor(R.color.colorPrimary)
+            .setHint("리뷰를 작성해주세요.")
+            .setHintTextColor(R.color.colorAccent)
+            .setCommentTextColor(R.color.white)
+            .setCommentBackgroundColor(R.color.colorPrimaryDark)
+            .setWindowAnimation(R.style.RatingDialogFadeAnim)
+            .create(this@FoodDeatils)
+            .show()
+    }
+
+    private fun getRatingFood(foodId : String){
+        var foodRating = ratingTbl.orderByChild("foodId").equalTo(foodId)
+        foodRating.addValueEventListener(object : ValueEventListener{
+            var count = 0
+            var sum = 0
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for(postSnapShot in dataSnapshot.children){
+                    var item = postSnapShot.getValue(Rating::class.java)
+                    sum += Integer.parseInt(item?.rateVlaue!!)
+                    count++
+                }
+
+                if(count != 0){
+                    var average = (sum/count).toFloat()
+                    ratingBar.rating = average
+                }
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        })
+
+    }
+
+    override fun onNegativeButtonClicked() {
+
+    }
+
+    override fun onNeutralButtonClicked() {
+
+    }
+
+    override fun onPositiveButtonClicked(rate: Int, comment: String) {
+        var rate = Rating(Common.currentUser.phone, foodId, rate.toString(), comment)
+
+        ratingTbl.child(Common.currentUser.phone).addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(p0: DataSnapshot) {
+                if(p0.child(Common.currentUser.phone).exists()){
+                    ratingTbl.child(Common.currentUser.phone).removeValue()
+                    ratingTbl.child(Common.currentUser.phone).setValue(rate)
+                }else{
+                    ratingTbl.child(Common.currentUser.phone).setValue(rate)
+                }
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
     }
 }
