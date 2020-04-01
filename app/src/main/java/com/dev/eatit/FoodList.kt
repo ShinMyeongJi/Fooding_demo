@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dev.eatit.ViewHolder.FoodViewHolder
 import com.dev.eatit.common.Common
+import com.dev.eatit.database.Database
 import com.dev.eatit.model.Food
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.android.material.snackbar.Snackbar
@@ -36,6 +37,8 @@ class FoodList : AppCompatActivity() {
     var searchAdapter : FirebaseRecyclerAdapter<Food, FoodViewHolder>? = null
     var suggestionList: ArrayList<String> = ArrayList()
 
+    lateinit var localDB : Database
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_food_list)
@@ -48,7 +51,7 @@ class FoodList : AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         recycler_food.layoutManager = layoutManager
 
-
+        localDB = Database(this@FoodList)
         if(intent != null) {
            categoryId = intent.getStringExtra("CategoryId")
            Log.d("CategoryId = ", categoryId)
@@ -116,11 +119,31 @@ class FoodList : AppCompatActivity() {
         ) {
             override fun populateViewHolder(foodViewHolder: FoodViewHolder?, model: Food?, position: Int) {
                 foodViewHolder?.food_name?.setText(model?.name)
-
                 Picasso.get().load(model?.image).into(foodViewHolder?.food_image)
 
-                val food = model
+                //favorites
+                if(localDB.isFavorites(adapter?.getRef(position)?.key)){
+                    foodViewHolder?.favorites?.setImageResource(R.drawable.ic_favorite_black_24dp)
+                }
 
+                foodViewHolder?.favorites?.setOnClickListener(object : View.OnClickListener{
+                    override fun onClick(v: View?) {
+                        if(!localDB.isFavorites(adapter?.getRef(position)?.key)) {
+                            localDB.addToFavorites(adapter?.getRef(position)?.key)
+                            foodViewHolder?.favorites?.setImageResource(R.drawable.ic_favorite_black_24dp)
+                            Snackbar.make(
+                                recycler_food,
+                                model?.name + "가 즐겨찾기에 추가 되었습니다.",
+                                Snackbar.LENGTH_SHORT
+                            ).show()
+                        }else{
+                            localDB.removeFavorites(adapter?.getRef(position)?.key)
+                            foodViewHolder?.favorites?.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+                        }
+                    }
+                })
+
+                val food = model
                 foodViewHolder?.setItemClickListener(object : ItemClickListener{
                     override fun onClick(view: View, position: Int, isLongClick: Boolean) {
                         var foodDetail = Intent(this@FoodList, FoodDeatils::class.java)

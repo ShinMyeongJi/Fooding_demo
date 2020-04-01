@@ -5,10 +5,7 @@ import android.media.MicrophoneInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
 import com.dev.eatit.common.Common
@@ -20,6 +17,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
+import com.stepstone.apprating.AppRatingDialog
+import kotlinx.android.synthetic.main.activity_food_deatils.*
 
 class FoodDeatils : AppCompatActivity() {
 
@@ -29,7 +28,10 @@ class FoodDeatils : AppCompatActivity() {
     lateinit var food_image : ImageView
     lateinit var collapsingToolbarLayout : CollapsingToolbarLayout
     lateinit var btnCart : FloatingActionButton
+    lateinit var btnRating : FloatingActionButton
     lateinit var numberButton : ElegantNumberButton
+
+    lateinit var ratingBar : RatingBar
 
     lateinit var detailsLayout : CoordinatorLayout
 
@@ -47,12 +49,15 @@ class FoodDeatils : AppCompatActivity() {
 
         numberButton = findViewById(R.id.number_button)
         btnCart = findViewById(R.id.btnCart)
+        btnRating = findViewById(R.id.btnRating)
 
         food_name = findViewById(R.id.food_detail_name)
         food_price = findViewById(R.id.food_detail_price)
         food_description = findViewById(R.id.food_detail_description)
         food_image = findViewById(R.id.food_detail_img)
         collapsingToolbarLayout = findViewById(R.id.collapsing)
+
+        ratingBar = findViewById(R.id.ratingBar)
 
         detailsLayout = findViewById(R.id.detailsLayout)
 
@@ -70,6 +75,12 @@ class FoodDeatils : AppCompatActivity() {
                 return
             }
         }
+
+        btnRating.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                showRatingDialog()
+            }
+        })
 
         btnCart.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
@@ -103,5 +114,11 @@ class FoodDeatils : AppCompatActivity() {
 
             }
         })
+    }
+
+    private fun showRatingDialog(){
+        var ratingDialogBuilder = AppRatingDialog.Builder()
+        ratingDialogBuilder.setPositiveButtonText("확인")
+            .setNegativeButtonText("취소")
     }
 }
