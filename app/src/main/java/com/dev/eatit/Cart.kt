@@ -16,6 +16,7 @@ import com.dev.eatit.model.Order
 import com.dev.eatit.model.Request
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.rengwuxian.materialedittext.MaterialEditText
 import kotlinx.android.synthetic.main.activity_food_deatils.view.*
 import java.lang.NumberFormatException
 import java.text.NumberFormat
@@ -85,14 +86,21 @@ class Cart : AppCompatActivity() {
         alertDialog.setTitle("주소입력")
         alertDialog.setMessage("주소를 입력하세요 : ")
 
-        val edtAddress = EditText(this@Cart)
+        /*val edtAddress = EditText(this@Cart)
         var lp = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.MATCH_PARENT
         )
 
-        edtAddress.layoutParams = lp
-        alertDialog.setView(edtAddress)
+        edtAddress.layoutParams = lp*/
+
+        var inflater = this.layoutInflater
+        var order_address_comment = inflater.inflate(R.layout.order_address_comment, null)
+
+        var edtAddress = order_address_comment.findViewById<MaterialEditText>(R.id.edtAddress)
+        var edtComment = order_address_comment.findViewById<MaterialEditText>(R.id.edtComment)
+
+        alertDialog.setView(order_address_comment)
         alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp)
 
         alertDialog.setPositiveButton("Yes", object : DialogInterface.OnClickListener{
@@ -102,6 +110,8 @@ class Cart : AppCompatActivity() {
                     Common.currentUser.name,
                     edtAddress.text.toString(),
                     txtTotal.text.toString(),
+                    "0",
+                    edtComment.text.toString(),
                     cart
                 )
 
