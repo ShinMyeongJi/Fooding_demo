@@ -6,10 +6,19 @@ import android.net.NetworkCapabilities
 import android.net.NetworkInfo
 import android.os.Build
 import com.dev.eatit.model.User
+import com.dev.eatit.remote.ApiService
+import com.dev.eatit.remote.RetrofitClient
+import retrofit2.Retrofit
 
 class Common {
     companion object{
         lateinit var currentUser : User
+
+        private val BASE_URL = "https://fcm.googleapis.com/"
+
+        fun getFCMService(): ApiService? {
+            return RetrofitClient.Companion.getClient(BASE_URL)?.create(ApiService::class.java)
+        }
 
         val DELETE = "삭제"
         val USER_KEY = "User"

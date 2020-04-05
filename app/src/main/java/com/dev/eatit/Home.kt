@@ -22,11 +22,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dev.eatit.ViewHolder.MenuViewHolder
 import com.dev.eatit.common.Common
 import com.dev.eatit.model.Category
-import com.dev.eatit.service.ListenOrder
+import com.dev.eatit.model.Token
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.core.view.View
+import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.picasso.Picasso
 import io.paperdb.Paper
 
@@ -89,10 +89,13 @@ class Home : AppCompatActivity() {
             Snackbar.make(recycler_menu, "네트워크 연결을 확인해주세요.", Snackbar.LENGTH_SHORT).show()
             return
         }
-        var service = Intent(this@Home, ListenOrder::class.java)
+        /*var service = Intent(this@Home, ListenOrder::class.java)
         startService(service)
-
-
+        <service
+        android:name=".service.ListenOrder"
+        android:enabled="true"
+        android:exported="true"></service>*/
+        updateToken(FirebaseInstanceId.getInstance().token!!)
 
         navView.setNavigationItemSelectedListener(object : NavigationView.OnNavigationItemSelectedListener{
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -123,6 +126,14 @@ class Home : AppCompatActivity() {
         })
 
     }
+
+    private fun updateToken(tokenRefreshed : String){
+        var db = FirebaseDatabase.getInstance()
+        var tokens = db.getReference("Tokens")
+        var token = Token(tokenRefreshed, false)
+        tokens.child(Common.currentUser.phone).setValue(token)
+    }
+
     fun loadMenu(){
         adapter = object : FirebaseRecyclerAdapter<Category, MenuViewHolder>(Category::class.java, R.layout.menu_item, MenuViewHolder::class.java, category) {
             override fun populateViewHolder(viewHolder: MenuViewHolder?, model: Category?, position: Int) {

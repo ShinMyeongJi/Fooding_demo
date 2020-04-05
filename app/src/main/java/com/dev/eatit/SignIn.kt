@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.renderscript.Sampler
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.*
@@ -57,9 +58,6 @@ class SignIn : AppCompatActivity(){
 
                 if (Common.isConnectedToInternet(baseContext)) {
 
-
-
-
                     if (autoLoginCheck.isChecked()) {
                         Paper.book().write(Common.USER_KEY, edtPhone.text.toString())
                         Paper.book().write(Common.PWD_KEY, edtPassword.text.toString())
@@ -76,7 +74,9 @@ class SignIn : AppCompatActivity(){
                                 var user = p0.child(edtPhone.text.toString()).getValue(User::class.java)
                                 user?.phone = edtPhone.text.toString()
                                 if (user!!.password.equals(edtPassword.text.toString())) {
+                                    mDialog.dismiss()
                                     var homeIntent = Intent(this@SignIn, Home::class.java)
+                                    Log.e("Tlqkf", user.phone)
                                     Common.currentUser = user
                                     startActivity(homeIntent)
                                     finish()
