@@ -1,10 +1,15 @@
 package com.dev.eatit
 
+import android.content.DialogInterface
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -24,11 +29,17 @@ import com.dev.eatit.common.Common
 import com.dev.eatit.model.Category
 import com.dev.eatit.model.Token
 import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.Task
+import com.google.android.material.dialog.InsetDialogOnTouchListener
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.iid.FirebaseInstanceId
+import com.rengwuxian.materialedittext.MaterialEditText
 import com.squareup.picasso.Picasso
 import io.paperdb.Paper
+import java.lang.Exception
 
 class Home : AppCompatActivity() {
 
@@ -109,6 +120,8 @@ class Home : AppCompatActivity() {
                 }else if(id == R.id.nav_orders){
                     var orderIntent = Intent(this@Home, OrderStatus::class.java)
                     startActivity(orderIntent)
+                }else if(id == R.id.nav_change_pwd) {
+                    showChangePasswordDialog()
                 }else if(id == R.id.logout){
                     //자동 로그인 해제
                     Paper.book().destroy()
@@ -125,6 +138,62 @@ class Home : AppCompatActivity() {
             }
         })
 
+    }
+
+    private fun showChangePasswordDialog(){
+        var dialogBuilder = AlertDialog.Builder(this@Home)
+        dialogBuilder.setTitle("비밀번호 변경")
+
+        var inflater = LayoutInflater.from(this)
+        var layout_pwd = inflater.inflate(R.layout.change_password_layout, null)
+
+        var edtPassword = layout_pwd.findViewById<MaterialEditText>(R.id.edtPassword)
+        var edtNewPassword = layout_pwd.findViewById<MaterialEditText>(R.id.edtNewPassword)
+        var edtRepeatPassword = layout_pwd.findViewById<MaterialEditText>(R.id.edtRepeatPassword)
+
+        dialogBuilder.setView(layout_pwd)
+
+        dialogBuilder.setPositiveButton("확인", object : DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                var wating_dialog_builder = AlertDialog.Builder(this@Home)
+                var wating_dialog = wating_dialog_builder.create()
+                wating_dialog.show()
+
+
+                if(edtPassword.text.toString().equals(Common.currentUser.password)){
+                    if(edtNewPassword.text.toString().equals(edtRepeatPassword.text.toString())){
+                        var passwordUpdate = HashMap<String, String>()
+                        passwordUpdate.put("password", edtNewPassword.text.toString())
+
+                        var user = FirebaseDatabase.getInstance().getReference("User")
+                        user.child(Common.currentUser.phone)
+                            .updateChildren(passwordUpdate as Map<String, String>)
+                            .addOnCompleteListener(object : OnCompleteListener<Void>{
+                                override fun onComplete(p0: Task<Void>) {
+                                    wating_dialog.dismiss()
+                                    Toast.makeText(this@Home, "비밀번호가 변경되었습니다.", Toast.LENGTH_LONG).show()
+                                }
+                            })
+                            .addOnFailureListener(object : OnFailureListener{
+                                override fun onFailure(p0: Exception) {
+                                    Toast.makeText(this@Home, p0.message, Toast.LENGTH_LONG).show()
+                                }
+                            })
+                    }else{
+                        wating_dialog.dismiss()
+                        Toast.makeText(this@Home, "새 비밀번호를 확인해주세요.", Toast.LENGTH_LONG).show()
+
+                    }
+                }
+            }
+        })
+
+        dialogBuilder.setNegativeButton("취소", object : DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+
+            }
+        })
+        dialogBuilder.show()
     }
 
     private fun updateToken(tokenRefreshed : String){

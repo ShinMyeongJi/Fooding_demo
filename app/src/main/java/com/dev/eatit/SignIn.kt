@@ -67,7 +67,7 @@ class SignIn : AppCompatActivity(){
                     mDialog.setMessage("Please waiting...")
                     mDialog.show()
 
-                    table_user.addValueEventListener(object : ValueEventListener {
+                    table_user.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(p0: DataSnapshot) {
                             if (p0.child(edtPhone.text.toString()).exists()) {
                                 mDialog.dismiss()
@@ -76,10 +76,11 @@ class SignIn : AppCompatActivity(){
                                 if (user!!.password.equals(edtPassword.text.toString())) {
                                     mDialog.dismiss()
                                     var homeIntent = Intent(this@SignIn, Home::class.java)
-                                    Log.e("Tlqkf", user.phone)
                                     Common.currentUser = user
                                     startActivity(homeIntent)
                                     finish()
+
+                                    table_user.removeEventListener(this)
                                 } else
                                     Toast.makeText(
                                         this@SignIn, "Login failed!!", Toast.LENGTH_LONG
