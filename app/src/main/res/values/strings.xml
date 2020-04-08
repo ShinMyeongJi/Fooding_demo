@@ -19,4 +19,6 @@
     <string name="forgot_pwd">비밀번호 찾기</string>
 
     <string name="home_second">Home Second</string>
+    <string name="facebook_app_key">688163198659492</string>
+    <string name="facebook_login_protocol_name">fb688163198659492</string>
 </resources>

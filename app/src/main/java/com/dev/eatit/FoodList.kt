@@ -1,6 +1,8 @@
 package com.dev.eatit
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,16 +12,22 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dev.eatit.ViewHolder.FoodViewHolder
 import com.dev.eatit.common.Common
 import com.dev.eatit.database.Database
 import com.dev.eatit.model.Food
+import com.facebook.CallbackManager
+import com.facebook.share.model.SharePhoto
+import com.facebook.share.model.SharePhotoContent
+import com.facebook.share.widget.ShareDialog
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import com.mancj.materialsearchbar.MaterialSearchBar
 import com.squareup.picasso.Picasso
-import java.text.FieldPosition
+import com.squareup.picasso.Target
+import java.lang.Exception
 
 
 class FoodList : AppCompatActivity() {
@@ -30,6 +38,8 @@ class FoodList : AppCompatActivity() {
     lateinit var recycler_food : RecyclerView
     lateinit var layoutManager : RecyclerView.LayoutManager
 
+    lateinit var swipeLayout : SwipeRefreshLayout
+
     var categoryId : String = ""
     var adapter: FirebaseRecyclerAdapter<Food, FoodViewHolder>? = null
 
@@ -39,32 +49,92 @@ class FoodList : AppCompatActivity() {
 
     lateinit var localDB : Database
 
+    lateinit var callbackManager : CallbackManager
+    lateinit var shareDialog : ShareDialog
+
+    var target : Target = object : Target{
+        override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+        }
+
+        override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+        }
+
+        override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+            var photo = SharePhoto.Builder()
+                .setBitmap(bitmap)
+                .build()
+            if(ShareDialog.canShow(SharePhotoContent::class.java)){
+                var content = SharePhotoContent.Builder()
+                    .addPhoto(photo)
+                    .build()
+                shareDialog.show(content)
+            }
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_food_list)
 
+        callbackManager = CallbackManager.Factory.create()
+        shareDialog = ShareDialog(this@FoodList)
+
         database = FirebaseDatabase.getInstance()
         foodList = database.getReference("Food")
+
+        swipeLayout = findViewById(R.id.swipe_layout)
 
         recycler_food = findViewById(R.id.recycle_food) as RecyclerView
         recycler_food.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(this)
         recycler_food.layoutManager = layoutManager
 
-        localDB = Database(this@FoodList)
-        if(intent != null) {
-           categoryId = intent.getStringExtra("CategoryId")
-           Log.d("CategoryId = ", categoryId)
-        }
+        swipeLayout.setColorSchemeResources(
+            R.color.colorPrimary,
+            android.R.color.holo_green_dark,
+            android.R.color.holo_orange_dark,
+            android.R.color.holo_blue_dark
+        )
 
-        if(!categoryId.isEmpty() && categoryId != null){
-            if(Common.isConnectedToInternet(this@FoodList)){
-                loadListFood(categoryId)
-            }else{
-                Snackbar.make(recycler_food, "네트워크 연결을 확인해주세요.", Snackbar.LENGTH_SHORT).show()
-                return
+        swipeLayout.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
+            override fun onRefresh() {
+                if(intent != null) {
+                    categoryId = intent.getStringExtra("CategoryId")
+                    Log.d("CategoryId = ", categoryId)
+                }
+
+                if(!categoryId.isEmpty() && categoryId != null){
+                    if(Common.isConnectedToInternet(this@FoodList)){
+                        loadListFood(categoryId)
+                    }else{
+                        Snackbar.make(recycler_food, "네트워크 연결을 확인해주세요.", Snackbar.LENGTH_SHORT).show()
+                        return
+                    }
+                }
             }
-        }
+        })
+
+        swipeLayout.post(object : Runnable{
+            override fun run() {
+                if(intent != null) {
+                    categoryId = intent.getStringExtra("CategoryId")
+                    Log.d("CategoryId = ", categoryId)
+                }
+
+                if(!categoryId.isEmpty() && categoryId != null){
+                    if(Common.isConnectedToInternet(this@FoodList)){
+                        loadListFood(categoryId)
+                    }else{
+                        Snackbar.make(recycler_food, "네트워크 연결을 확인해주세요.", Snackbar.LENGTH_SHORT).show()
+                        return
+                    }
+                }
+            }
+        })
+
+        localDB = Database(this@FoodList)
+
 
         searchBar = findViewById(R.id.searchBar)
         loadRes()
@@ -77,7 +147,6 @@ class FoodList : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 var suggestion = ArrayList<String>();
                 for(search in suggestionList){
-                    Log.d("search===== : ", search)
                     if(search.contains(searchBar.text.toLowerCase())){
                         suggestion.add(search)
 
@@ -143,6 +212,13 @@ class FoodList : AppCompatActivity() {
                     }
                 })
 
+                //facebook share
+                foodViewHolder?.share?.setOnClickListener(object : View.OnClickListener{
+                    override fun onClick(v: View?) {
+                        Picasso.get().load(model?.image).into(target)
+                    }
+                })
+
                 val food = model
                 foodViewHolder?.setItemClickListener(object : ItemClickListener{
                     override fun onClick(view: View, position: Int, isLongClick: Boolean) {
@@ -156,6 +232,7 @@ class FoodList : AppCompatActivity() {
 
         Log.d("itemCount : " , adapter?.itemCount.toString())
         recycler_food.adapter = adapter
+        swipeLayout.isRefreshing = false
     }
 
     private fun loadRes(){

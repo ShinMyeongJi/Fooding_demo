@@ -24,6 +24,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dev.eatit.ViewHolder.MenuViewHolder
 import com.dev.eatit.common.Common
 import com.dev.eatit.model.Category
@@ -52,6 +53,9 @@ class Home : AppCompatActivity() {
 
     lateinit var recycler_menu : RecyclerView
     lateinit var layoutManager : RecyclerView.LayoutManager
+
+    lateinit var swipeLayout : SwipeRefreshLayout
+
     var adapter: FirebaseRecyclerAdapter<Category, MenuViewHolder>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +66,35 @@ class Home : AppCompatActivity() {
         //Firebase 초기화
         database = FirebaseDatabase.getInstance()
         category = database.getReference("Category")
+
+        swipeLayout = findViewById(R.id.swipeLayout)
+        swipeLayout.setColorSchemeResources(
+            R.color.colorPrimary,
+            android.R.color.holo_green_dark,
+            android.R.color.holo_orange_dark,
+            android.R.color.holo_blue_dark)
+
+        swipeLayout.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
+            override fun onRefresh() {
+                if (Common.isConnectedToInternet(baseContext)) {
+                    loadMenu()
+                }else{
+                    Snackbar.make(recycler_menu, "네트워크 연결을 확인해주세요.", Snackbar.LENGTH_SHORT).show()
+                    return
+                }
+            }
+        })
+
+        swipeLayout.post(object : Runnable{
+            override fun run() {
+                if (Common.isConnectedToInternet(baseContext)) {
+                    loadMenu()
+                }else{
+                    Snackbar.make(recycler_menu, "네트워크 연결을 확인해주세요.", Snackbar.LENGTH_SHORT).show()
+                    return
+                }
+            }
+        })
 
         Paper.init(this@Home)
 
@@ -94,18 +127,6 @@ class Home : AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         recycler_menu.layoutManager = layoutManager
 
-        if (Common.isConnectedToInternet(this@Home)) {
-            loadMenu()
-        }else{
-            Snackbar.make(recycler_menu, "네트워크 연결을 확인해주세요.", Snackbar.LENGTH_SHORT).show()
-            return
-        }
-        /*var service = Intent(this@Home, ListenOrder::class.java)
-        startService(service)
-        <service
-        android:name=".service.ListenOrder"
-        android:enabled="true"
-        android:exported="true"></service>*/
         updateToken(FirebaseInstanceId.getInstance().token!!)
 
         navView.setNavigationItemSelectedListener(object : NavigationView.OnNavigationItemSelectedListener{
@@ -226,6 +247,7 @@ class Home : AppCompatActivity() {
             }
         }
         recycler_menu.adapter = adapter
+        swipeLayout.isRefreshing = false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

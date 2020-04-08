@@ -2,19 +2,25 @@ package com.dev.eatit
 
 import android.app.ProgressDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Base64
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.view.View
 import android.widget.Toast
 import com.dev.eatit.common.Common
 import com.dev.eatit.model.User
+import com.facebook.FacebookSdk
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import io.paperdb.Paper
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,11 +32,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        FacebookSdk.sdkInitialize(applicationContext)
         signUp = findViewById(R.id.btnSignUp)
         signIn = findViewById(R.id.btnSignIn)
 
         Paper.init(this@MainActivity)
+
+        getKeyHash()
 
         signUp.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
@@ -57,6 +65,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun getKeyHash(){
+        try{
+            var info = packageManager.getPackageInfo("com.dev.eatit", PackageManager.GET_SIGNATURES)
+            for(signature in info.signatures){
+                var md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray())
+                Log.d("key hash = ", Base64.encodeToString(md.digest(), Base64.DEFAULT))
+            }
+        }catch (e : PackageManager.NameNotFoundException){
+            e.printStackTrace()
+        }catch (e : NoSuchAlgorithmException){
+            e.printStackTrace()
+        }
+    }
     private fun login(phone : String, pwd : String){
         val database = FirebaseDatabase.getInstance()
         val table_user = database.getReference("User")

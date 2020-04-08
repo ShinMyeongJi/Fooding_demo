@@ -78,6 +78,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:20.1.0'
     implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: '2.8.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
+    implementation 'com.facebook.android:facebook-share:6.3.0'
 
 
 }
