@@ -2,26 +2,34 @@ package com.dev.eatit
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dev.eatit.ViewHolder.FoodViewHolder
+import com.dev.eatit.ViewHolder.MenuViewHolder
 import com.dev.eatit.common.Common
 import com.dev.eatit.database.Database
+import com.dev.eatit.model.Category
 import com.dev.eatit.model.Food
 import com.facebook.CallbackManager
+import com.facebook.share.model.ShareLinkContent
 import com.facebook.share.model.SharePhoto
 import com.facebook.share.model.SharePhotoContent
 import com.facebook.share.widget.ShareDialog
 import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import com.mancj.materialsearchbar.MaterialSearchBar
@@ -60,15 +68,16 @@ class FoodList : AppCompatActivity() {
         }
 
         override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+
             var photo = SharePhoto.Builder()
                 .setBitmap(bitmap)
                 .build()
-            if(ShareDialog.canShow(SharePhotoContent::class.java)){
+            //if(ShareDialog.canShow(SharePhotoContent::class.java)){
                 var content = SharePhotoContent.Builder()
                     .addPhoto(photo)
                     .build()
                 shareDialog.show(content)
-            }
+            //}
         }
 
     }
@@ -180,14 +189,24 @@ class FoodList : AppCompatActivity() {
 
 
     private fun loadListFood(categoryId : String){
-        adapter = object :  FirebaseRecyclerAdapter<Food, FoodViewHolder>(
-            Food::class.java,
-            R.layout.food_item,
-            FoodViewHolder::class.java,
-            foodList.orderByChild("menuId").equalTo(categoryId) // like : Select * From Food where menuId = categoryId
-        ) {
-            override fun populateViewHolder(foodViewHolder: FoodViewHolder?, model: Food?, position: Int) {
+        var queryById = foodList.orderByChild("menuId").equalTo(categoryId)
+
+
+        var options = FirebaseRecyclerOptions.Builder<Food>()
+            .setQuery(queryById, Food::class.java)
+            .build()
+
+        adapter = object : FirebaseRecyclerAdapter<Food, FoodViewHolder>(options){
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {
+                var itemView = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.food_item, parent, false)
+                var viewHolder = FoodViewHolder(itemView)
+                return viewHolder
+            }
+
+            override fun onBindViewHolder(foodViewHolder: FoodViewHolder, position: Int, model: Food) {
                 foodViewHolder?.food_name?.setText(model?.name)
+                foodViewHolder?.food_price?.setText(String.format("%s원", model?.price))
                 Picasso.get().load(model?.image).into(foodViewHolder?.food_image)
 
                 //favorites
@@ -216,6 +235,24 @@ class FoodList : AppCompatActivity() {
                 foodViewHolder?.share?.setOnClickListener(object : View.OnClickListener{
                     override fun onClick(v: View?) {
                         Picasso.get().load(model?.image).into(target)
+                        var bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_favorite_border_black_24dp) as Bitmap
+                        var photo = SharePhoto.Builder()
+                            .setBitmap(bitmap)
+                            .build()
+
+                        var content = SharePhotoContent.Builder()
+                            .addPhoto(photo)
+                            .build()
+                        shareDialog.show(content)
+
+                        /*var shareDialog = ShareDialog(this@FoodList)
+
+
+                        var content = ShareLinkContent.Builder()
+                            .setContentUrl(Uri.parse("https://developers.facebook.com"))
+                            .build();
+                        shareDialog.show(content)*/
+
                     }
                 })
 
@@ -227,12 +264,21 @@ class FoodList : AppCompatActivity() {
                         startActivity(foodDetail)
                     }
                 })
+
             }
         }
+
+        adapter?.startListening()
 
         Log.d("itemCount : " , adapter?.itemCount.toString())
         recycler_food.adapter = adapter
         swipeLayout.isRefreshing = false
+    }
+
+    override fun onStop() {
+        super.onStop()
+        adapter?.stopListening()
+        searchAdapter?.stopListening()
     }
 
     private fun loadRes(){
@@ -253,13 +299,22 @@ class FoodList : AppCompatActivity() {
     }
 
     private fun startSearch(text: CharSequence?) {
-        searchAdapter = object :FirebaseRecyclerAdapter<Food, FoodViewHolder>(
-            Food::class.java,
-            R.layout.food_item,
-            FoodViewHolder::class.java,
-            foodList.orderByChild("name").equalTo(text.toString())
-        ){
-            override fun populateViewHolder(foodViewHolder: FoodViewHolder?, model: Food?, position: Int) {
+
+        var searchByName = foodList.orderByChild("Name").equalTo(text.toString()) as Query
+
+        var options = FirebaseRecyclerOptions.Builder<Food>()
+            .setQuery(searchByName, Food::class.java)
+            .build()
+
+        searchAdapter = object :FirebaseRecyclerAdapter<Food, FoodViewHolder>(options){
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {
+                var itemView = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.food_item, parent, false)
+                var viewHolder = FoodViewHolder(itemView)
+                return viewHolder
+            }
+
+            override fun onBindViewHolder(foodViewHolder: FoodViewHolder, position: Int, model: Food) {
                 foodViewHolder?.food_name?.setText(model?.name)
                 Log.d("foodName : ", model?.name)
                 Picasso.get().load(model?.image).into(foodViewHolder?.food_image)
@@ -277,6 +332,10 @@ class FoodList : AppCompatActivity() {
                 })
             }
         }
+
+
+
+        searchAdapter?.startListening()
         recycler_food.adapter = searchAdapter
     }
 }

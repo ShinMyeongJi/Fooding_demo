@@ -20,6 +20,7 @@ import com.rengwuxian.materialedittext.MaterialEditText
 import kotlinx.android.synthetic.main.activity_food_deatils.view.*
 import retrofit2.Call
 import retrofit2.Response
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import java.lang.NumberFormatException
 import java.text.NumberFormat
 import java.util.*
@@ -42,6 +43,10 @@ class Cart : AppCompatActivity() {
     lateinit var mService : ApiService //푸시 서비스
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+
+
         setContentView(R.layout.activity_cart)
 
         database = FirebaseDatabase.getInstance()

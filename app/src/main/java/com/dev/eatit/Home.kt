@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -20,8 +21,10 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.MenuView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -30,6 +33,7 @@ import com.dev.eatit.common.Common
 import com.dev.eatit.model.Category
 import com.dev.eatit.model.Token
 import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
@@ -124,8 +128,9 @@ class Home : AppCompatActivity() {
         //Load Menu
         recycler_menu = findViewById(R.id.recycle_menu) as RecyclerView
         recycler_menu.setHasFixedSize(true)
-        layoutManager = LinearLayoutManager(this)
-        recycler_menu.layoutManager = layoutManager
+        //layoutManager = LinearLayoutManager(this)
+        //recycler_menu.layoutManager = layoutManager
+        recycler_menu.layoutManager=GridLayoutManager(this, 2);
 
         updateToken(FirebaseInstanceId.getInstance().token!!)
 
@@ -140,6 +145,7 @@ class Home : AppCompatActivity() {
                     startActivity(cartIntent)
                 }else if(id == R.id.nav_orders){
                     var orderIntent = Intent(this@Home, OrderStatus::class.java)
+                    orderIntent.putExtra("userPhone", Common.currentUser.phone)
                     startActivity(orderIntent)
                 }else if(id == R.id.nav_change_pwd) {
                     showChangePasswordDialog()
@@ -225,14 +231,25 @@ class Home : AppCompatActivity() {
     }
 
     fun loadMenu(){
-        adapter = object : FirebaseRecyclerAdapter<Category, MenuViewHolder>(Category::class.java, R.layout.menu_item, MenuViewHolder::class.java, category) {
-            override fun populateViewHolder(viewHolder: MenuViewHolder?, model: Category?, position: Int) {
+        var options = FirebaseRecyclerOptions.Builder<Category>()
+            .setQuery(category, Category::class.java)
+            .build()
+
+        adapter = object : FirebaseRecyclerAdapter<Category, MenuViewHolder>(options) {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MenuViewHolder {
+                var itemView = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.menu_item, parent, false)
+                var viewHolder = MenuViewHolder(itemView)
+                return viewHolder
+            }
+
+            override fun onBindViewHolder(viewHolder: MenuViewHolder, position: Int, model: Category) {
                 viewHolder?.txtMenuName?.setText(model?.name)
                 Picasso.get().load(model?.image).into(viewHolder?.imageView)
                 var clickItem = model as Category
 
                 viewHolder?.setItemClickListener(object : ItemClickListener {
-                   override fun onClick(
+                    override fun onClick(
                         view: android.view.View,
                         position: Int,
                         isLongClick: Boolean
@@ -246,8 +263,14 @@ class Home : AppCompatActivity() {
                 })
             }
         }
+        adapter?.startListening()
         recycler_menu.adapter = adapter
         swipeLayout.isRefreshing = false
+    }
+
+    override fun onStop() {
+        super.onStop()
+        adapter?.stopListening()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -12,7 +12,7 @@ import com.dev.eatit.R;
 
 public class FoodViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    public TextView food_name;
+    public TextView food_name, food_price;
     public ImageView food_image;
     public ImageView favorites, share;
 
@@ -25,6 +25,7 @@ public class FoodViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     public FoodViewHolder(@NonNull View itemView) {
         super(itemView);
         food_name = itemView.findViewById(R.id.food_name);
+        food_price = itemView.findViewById(R.id.food_price);
         food_image = itemView.findViewById(R.id.food_image);
         favorites = itemView.findViewById(R.id.favorit);
         share = itemView.findViewById(R.id.btnShare);

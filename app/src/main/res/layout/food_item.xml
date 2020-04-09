@@ -3,37 +3,42 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    app:cardElevation="4dp"
+    android:layout_height="wrap_content"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="0dp"
     android:layout_marginBottom="8dp"
     >
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="5">
+
         <ImageView
             android:id="@+id/food_image"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
             android:scaleType="centerCrop"
             android:src="@drawable/back"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal"
             android:weightSum="10"
-            android:layout_alignParentBottom="true"
-            android:background="#4f0e0d0e">
+            android:gravity="center_vertical"
+            android:layout_margin="10dp"
+            >
 
             <TextView
                 android:id="@+id/food_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Name of Food"
-                android:textColor="@android:color/white"
                 android:layout_weight="8"
                 android:textSize="20sp"
-                android:gravity="center"
                 />
 
             <ImageView
@@ -42,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:src="@drawable/ic_share_black_24dp"
-                android:tint="@color/white"/>
+                android:tint="@color/colorAccent"/>
 
             <ImageView
                 android:id="@+id/favorit"
@@ -50,9 +55,21 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:src="@drawable/ic_favorite_border_black_24dp"
-                android:tint="@color/white"/>
+                android:tint="@color/colorAccent"/>
 
         </LinearLayout>
-    </RelativeLayout>
+
+        <TextView
+            android:id="@+id/food_price"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100"
+            android:layout_weight="8"
+            android:textSize="20sp"
+            />
+
+
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>

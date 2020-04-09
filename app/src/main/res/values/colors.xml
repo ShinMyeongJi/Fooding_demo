@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#004d40</color>
+    <color name="colorPrimary">#fcba03</color>
     <color name="colorPrimaryDark">#00251a</color>
-    <color name="colorAccent">#39796b</color>
+    <color name="colorAccent">#fcba03</color>
     <color name="btnSignUp">#fcba03</color>
     <color name="btnSignActive">#ffb700</color>
     <color name="overlayBackground">#7f333639</color>
