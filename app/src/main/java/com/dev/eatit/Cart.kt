@@ -44,9 +44,6 @@ class Cart : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
-
         setContentView(R.layout.activity_cart)
 
         database = FirebaseDatabase.getInstance()
@@ -102,7 +99,6 @@ class Cart : AppCompatActivity() {
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.MATCH_PARENT
         )
-
         edtAddress.layoutParams = lp*/
 
         var inflater = this.layoutInflater
@@ -134,8 +130,7 @@ class Cart : AppCompatActivity() {
 
                 sendNotificationOrder(order_number)
 
-                /*Toast.makeText(this@Cart, "주문이 완료되었습니다.", Toast.LENGTH_LONG).show()
-                finish()*/
+
             }
         })
 

@@ -153,7 +153,6 @@ class Home : AppCompatActivity() {
                     //자동 로그인 해제
                     Paper.book().destroy()
 
-
                     var signIn = Intent(this@Home, SignIn::class.java)
                     signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     startActivity(signIn)
