@@ -36,6 +36,7 @@ import com.mancj.materialsearchbar.MaterialSearchBar
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import java.lang.Exception
+import java.net.URL
 
 
 class FoodList : AppCompatActivity() {
@@ -72,12 +73,16 @@ class FoodList : AppCompatActivity() {
             var photo = SharePhoto.Builder()
                 .setBitmap(bitmap)
                 .build()
-            //if(ShareDialog.canShow(SharePhotoContent::class.java)){
+
+            Log.d("photo =>", ShareDialog.canShow(SharePhotoContent::class.java).toString())
+            if(ShareDialog.canShow(SharePhotoContent::class.java)){
+                Log.d("bitmap=>", photo.imageUrl.toString())
                 var content = SharePhotoContent.Builder()
                     .addPhoto(photo)
                     .build()
+
                 shareDialog.show(content)
-            //}
+            }
         }
 
     }
@@ -87,7 +92,7 @@ class FoodList : AppCompatActivity() {
         setContentView(R.layout.activity_food_list)
 
         callbackManager = CallbackManager.Factory.create()
-        shareDialog = ShareDialog(this@FoodList)
+        shareDialog = ShareDialog(this)
 
         database = FirebaseDatabase.getInstance()
         foodList = database.getReference("Food")
@@ -234,24 +239,13 @@ class FoodList : AppCompatActivity() {
                 //facebook share
                 foodViewHolder?.share?.setOnClickListener(object : View.OnClickListener{
                     override fun onClick(v: View?) {
-                        Picasso.get().load(model?.image).into(target)
-                        var bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_favorite_border_black_24dp) as Bitmap
+                        //Picasso.get().load(model?.image).into(target)
+
+                        var url = URL(model?.image)
+                        var bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream()) as Bitmap
+
                         var photo = SharePhoto.Builder()
-                            .setBitmap(bitmap)
-                            .build()
 
-                        var content = SharePhotoContent.Builder()
-                            .addPhoto(photo)
-                            .build()
-                        shareDialog.show(content)
-
-                        /*var shareDialog = ShareDialog(this@FoodList)
-
-
-                        var content = ShareLinkContent.Builder()
-                            .setContentUrl(Uri.parse("https://developers.facebook.com"))
-                            .build();
-                        shareDialog.show(content)*/
 
                     }
                 })
@@ -337,5 +331,10 @@ class FoodList : AppCompatActivity() {
 
         searchAdapter?.startListening()
         recycler_food.adapter = searchAdapter
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadListFood(categoryId)
     }
 }

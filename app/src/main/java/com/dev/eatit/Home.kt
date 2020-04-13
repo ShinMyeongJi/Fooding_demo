@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -100,6 +101,42 @@ class Home : AppCompatActivity() {
             }
         })
 
+
+        var options = FirebaseRecyclerOptions.Builder<Category>()
+            .setQuery(category, Category::class.java)
+            .build()
+
+        adapter = object : FirebaseRecyclerAdapter<Category, MenuViewHolder>(options) {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MenuViewHolder {
+                var itemView = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.menu_item, parent, false)
+                var viewHolder = MenuViewHolder(itemView)
+                return viewHolder
+            }
+
+            override fun onBindViewHolder(viewHolder: MenuViewHolder, position: Int, model: Category) {
+                viewHolder?.txtMenuName?.setText(model?.name)
+                Picasso.get().load(model?.image).into(viewHolder?.imageView)
+                var clickItem = model as Category
+
+                viewHolder?.setItemClickListener(object : ItemClickListener {
+                    override fun onClick(
+                        view: android.view.View,
+                        position: Int,
+                        isLongClick: Boolean
+                    ) {
+                        //클릭 시 새 activity에 menuId를 보내 줌
+                        var menuIdIntent = Intent(this@Home, FoodList::class.java)
+                        menuIdIntent.putExtra("CategoryId", adapter?.getRef(position)?.key)
+                        startActivity(menuIdIntent);
+                        //Toast.makeText(this@Home, "" + clickItem.name, Toast.LENGTH_LONG).show()
+                    }
+                })
+            }
+        }
+
+
+
         Paper.init(this@Home)
 
         val fab: FloatingActionButton = findViewById(R.id.fab)
@@ -127,10 +164,10 @@ class Home : AppCompatActivity() {
 
         //Load Menu
         recycler_menu = findViewById(R.id.recycle_menu) as RecyclerView
-        recycler_menu.setHasFixedSize(true)
-        //layoutManager = LinearLayoutManager(this)
-        //recycler_menu.layoutManager = layoutManager
         recycler_menu.layoutManager=GridLayoutManager(this, 2);
+
+        var controller = AnimationUtils.loadLayoutAnimation(recycler_menu.context, R.anim.layout_fall_dimen)
+        recycler_menu.layoutAnimation = controller
 
         updateToken(FirebaseInstanceId.getInstance().token!!)
 
@@ -230,7 +267,7 @@ class Home : AppCompatActivity() {
     }
 
     fun loadMenu(){
-        var options = FirebaseRecyclerOptions.Builder<Category>()
+       /* var options = FirebaseRecyclerOptions.Builder<Category>()
             .setQuery(category, Category::class.java)
             .build()
 
@@ -262,9 +299,13 @@ class Home : AppCompatActivity() {
                 })
             }
         }
+*/
         adapter?.startListening()
         recycler_menu.adapter = adapter
         swipeLayout.isRefreshing = false
+
+        recycler_menu.adapter?.notifyDataSetChanged()
+        recycler_menu.scheduleLayoutAnimation()
     }
 
     override fun onStop() {
@@ -289,5 +330,10 @@ class Home : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadMenu()
     }
 }
