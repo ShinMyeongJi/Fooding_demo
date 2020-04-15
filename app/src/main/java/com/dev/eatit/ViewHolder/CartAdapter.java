@@ -20,6 +20,7 @@ import com.dev.eatit.R;
 import com.dev.eatit.common.Common;
 import com.dev.eatit.database.Database;
 import com.dev.eatit.model.Order;
+import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.Locale;
 class CartViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener{
 
     public TextView text_cart_name, text_cart_price;
+    public ImageView cart_image;
     public ElegantNumberButton btnQuantity;
 
     private ItemClickListener itemClickListener;
@@ -58,6 +60,7 @@ class CartViewHolder extends RecyclerView.ViewHolder implements View.OnClickList
         text_cart_name = itemView.findViewById(R.id.cart_item_name);
         text_cart_price = itemView.findViewById(R.id.cart_item_price);
         btnQuantity = itemView.findViewById(R.id.btnQuantity);
+        cart_image = itemView.findViewById(R.id.cart_image);
 
         itemView.setOnCreateContextMenuListener(this);
     }
@@ -124,6 +127,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder>{
 
         holder.text_cart_price.setText(fmt.format((Integer.parseInt(listData.get(position).getPrice()))*(Integer.parseInt(listData.get(position).getQuantity()))));
         holder.text_cart_name.setText(listData.get(position).getProductName());
+        Picasso.get()
+                .load(listData.get(position).getImage())
+                .resize(70, 70)
+                .centerCrop()
+                .into(holder.cart_image);
     }
 
     @Override

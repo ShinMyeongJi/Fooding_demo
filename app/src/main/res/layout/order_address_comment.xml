@@ -15,12 +15,11 @@
             android:layout_height="wrap_content"
             >
 
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/edtAddress"
+            <fragment
+                android:id="@+id/place_autocomplete_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:hint="주소"
+                android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
                 />
 
             <com.rengwuxian.materialedittext.MaterialEditText

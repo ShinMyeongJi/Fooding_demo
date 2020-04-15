@@ -98,7 +98,8 @@ class FoodDeatils : AppCompatActivity(), RatingDialogListener {
                         currentFood.name,
                         numberButton.number,
                         currentFood.price,
-                        currentFood.discount
+                        currentFood.discount,
+                        currentFood.image
                     )
                 )
                 Toast.makeText(this@FoodDeatils, "Added to Cart", Toast.LENGTH_LONG).show()
