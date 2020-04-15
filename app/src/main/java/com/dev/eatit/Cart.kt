@@ -8,6 +8,7 @@ import android.location.LocationListener
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
+import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -206,13 +207,6 @@ class Cart : AppCompatActivity() ,
         alertDialog.setTitle("주소입력")
         alertDialog.setMessage("주소를 입력하세요 : ")
 
-        /*val edtAddress = EditText(this@Cart)
-        var lp = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT
-        )
-        edtAddress.layoutParams = lp*/
-
         var inflater = this.layoutInflater
         var order_address_comment = inflater.inflate(R.layout.order_address_comment, null)
 
@@ -235,6 +229,16 @@ class Cart : AppCompatActivity() ,
         })
 
         var edtComment = order_address_comment.findViewById<MaterialEditText>(R.id.edtComment)
+        var get_home_address = order_address_comment.findViewById<RadioButton>(R.id.get_home_address)
+
+        get_home_address.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener{
+            override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
+                if(isChecked){
+                    if(Common.currentUser.homeAddress != null)
+                        edtAddress.view?.findViewById<EditText>(R.id.places_autocomplete_search_input)?.setText(Common.currentUser.homeAddress)
+                }
+            }
+        })
 
         alertDialog.setView(order_address_comment)
         alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp)

@@ -184,6 +184,8 @@ class Home : AppCompatActivity() {
                     var orderIntent = Intent(this@Home, OrderStatus::class.java)
                     orderIntent.putExtra("userPhone", Common.currentUser.phone)
                     startActivity(orderIntent)
+                }else if(id == R.id.nav_change_home_address){
+                    changeHomeAddDialog()
                 }else if(id == R.id.nav_change_pwd) {
                     showChangePasswordDialog()
                 }else if(id == R.id.logout){
@@ -256,6 +258,41 @@ class Home : AppCompatActivity() {
 
             }
         })
+        dialogBuilder.show()
+    }
+
+    private fun changeHomeAddDialog(){
+
+        var dialogBuilder = AlertDialog.Builder(this@Home)
+        dialogBuilder.setTitle("집 주소 변경")
+
+        var inflater = LayoutInflater.from(this)
+        var changeHomeAdd = inflater.inflate(R.layout.home_address_layout, null)
+
+        var home_address = changeHomeAdd.findViewById<MaterialEditText>(R.id.home_address)
+
+        dialogBuilder.setView(changeHomeAdd)
+
+        dialogBuilder.setPositiveButton("확인", object : DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                dialog?.dismiss()
+                Common.currentUser.homeAddress = home_address.text.toString()
+                FirebaseDatabase.getInstance().getReference("User")
+                    .child(Common.currentUser.phone)
+                    .setValue(Common.currentUser)
+                    .addOnCompleteListener(object : OnCompleteListener<Void>{
+                        override fun onComplete(p0: Task<Void>) {
+                            Snackbar.make(recycler_menu, Common.currentUser.phone, Snackbar.LENGTH_SHORT).show()
+                        }
+                    })
+                    .addOnFailureListener(object : OnFailureListener{
+                        override fun onFailure(p0: Exception) {
+                            Toast.makeText(this@Home, p0.toString(), Toast.LENGTH_SHORT).show()
+                        }
+                    })
+            }
+        })
+
         dialogBuilder.show()
     }
 
