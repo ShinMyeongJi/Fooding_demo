@@ -1,5 +1,6 @@
 package com.dev.eatit
 
+import android.content.Intent
 import android.media.Image
 import android.media.MicrophoneInfo
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,8 @@ import com.dev.eatit.database.Database
 import com.dev.eatit.model.Food
 import com.dev.eatit.model.Order
 import com.dev.eatit.model.Rating
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -34,6 +37,7 @@ class FoodDeatils : AppCompatActivity(), RatingDialogListener {
     lateinit var btnCart : FloatingActionButton
     lateinit var btnRating : FloatingActionButton
     lateinit var numberButton : ElegantNumberButton
+    lateinit var more_comment_btn : Button
 
     lateinit var ratingBar : RatingBar
 
@@ -67,6 +71,8 @@ class FoodDeatils : AppCompatActivity(), RatingDialogListener {
         ratingBar = findViewById(R.id.ratingBar)
 
         detailsLayout = findViewById(R.id.detailsLayout)
+
+        more_comment_btn = findViewById(R.id.more_comment_btn)
 
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppbar)
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppbar)
@@ -103,6 +109,14 @@ class FoodDeatils : AppCompatActivity(), RatingDialogListener {
                     )
                 )
                 Toast.makeText(this@FoodDeatils, "Added to Cart", Toast.LENGTH_LONG).show()
+            }
+        })
+
+        more_comment_btn.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                var intent = Intent(this@FoodDeatils, ShowComment::class.java)
+                intent.putExtra(Common.FOOD_ID, foodId)
+                startActivity(intent)
             }
         })
     }
@@ -180,7 +194,16 @@ class FoodDeatils : AppCompatActivity(), RatingDialogListener {
     override fun onPositiveButtonClicked(rate: Int, comment: String) {
         var rate = Rating(Common.currentUser.phone, foodId, rate.toString(), comment)
 
-        ratingTbl.child(Common.currentUser.phone).addValueEventListener(object : ValueEventListener{
+        ratingTbl.push()
+            .setValue(rate)
+            .addOnCompleteListener(object : OnCompleteListener<Void>{
+                override fun onComplete(task: Task<Void>) {
+                    Toast.makeText(this@FoodDeatils, "리뷰가 등록되었습니다.", Toast.LENGTH_LONG).show()
+                }
+            })
+
+
+        /*ratingTbl.child(Common.currentUser.phone).addValueEventListener(object : ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
                 if(p0.child(Common.currentUser.phone).exists()){
                     ratingTbl.child(Common.currentUser.phone).removeValue()
@@ -192,6 +215,6 @@ class FoodDeatils : AppCompatActivity(), RatingDialogListener {
 
             override fun onCancelled(p0: DatabaseError) {
             }
-        })
+        })*/
     }
 }
