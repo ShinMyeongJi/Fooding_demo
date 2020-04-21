@@ -144,50 +144,52 @@ class FoodList : AppCompatActivity() {
                         return
                     }
                 }
+
+                searchBar = findViewById(R.id.searchBar)
+                loadRes()
+                searchBar.lastSuggestions = suggestionList
+
+                searchBar.addTextChangeListener(object : TextWatcher{
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                        var suggestion = ArrayList<String>();
+                        for(search in suggestionList){
+                            if(search.contains(searchBar.text.toLowerCase())){
+                                suggestion.add(search)
+
+                            }
+                        }
+                        searchBar.lastSuggestions = suggestion
+                    }
+
+                    override fun afterTextChanged(s: Editable?) {
+                    }
+                })
+
+                searchBar.setOnSearchActionListener(object : MaterialSearchBar.OnSearchActionListener{
+                    override fun onButtonClicked(buttonCode: Int) {
+
+                    }
+
+                    override fun onSearchConfirmed(text: CharSequence?) {
+                        startSearch(text)
+                    }
+
+                    override fun onSearchStateChanged(enabled: Boolean) {
+                        if(!enabled){
+                            recycler_food.adapter = searchAdapter
+                        }
+                    }
+                })
+
             }
         })
 
         localDB = Database(this@FoodList)
 
 
-        searchBar = findViewById(R.id.searchBar)
-        loadRes()
-        searchBar.lastSuggestions = suggestionList
-
-        searchBar.addTextChangeListener(object : TextWatcher{
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                var suggestion = ArrayList<String>();
-                for(search in suggestionList){
-                    if(search.contains(searchBar.text.toLowerCase())){
-                        suggestion.add(search)
-
-                    }
-                }
-                searchBar.lastSuggestions = suggestion
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
-        })
-
-        searchBar.setOnSearchActionListener(object : MaterialSearchBar.OnSearchActionListener{
-            override fun onButtonClicked(buttonCode: Int) {
-
-            }
-
-            override fun onSearchConfirmed(text: CharSequence?) {
-                startSearch(text)
-            }
-
-            override fun onSearchStateChanged(enabled: Boolean) {
-                if(!enabled){
-                    recycler_food.adapter = searchAdapter
-                }
-            }
-        })
 
     }
 
@@ -294,7 +296,7 @@ class FoodList : AppCompatActivity() {
 
     private fun startSearch(text: CharSequence?) {
 
-        var searchByName = foodList.orderByChild("Name").equalTo(text.toString()) as Query
+        var searchByName = foodList.orderByChild("name").equalTo(text.toString()) as Query
 
         var options = FirebaseRecyclerOptions.Builder<Food>()
             .setQuery(searchByName, Food::class.java)

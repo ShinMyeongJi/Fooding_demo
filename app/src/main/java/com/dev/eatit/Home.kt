@@ -2,7 +2,6 @@ package com.dev.eatit
 
 import android.content.DialogInterface
 import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -22,15 +21,16 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.menu.MenuView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.denzcoskun.imageslider.ImageSlider
+import com.denzcoskun.imageslider.models.SlideModel
 import com.dev.eatit.ViewHolder.MenuViewHolder
 import com.dev.eatit.common.Common
+import com.dev.eatit.model.Banner
 import com.dev.eatit.model.Category
 import com.dev.eatit.model.Token
 import com.firebase.ui.database.FirebaseRecyclerAdapter
@@ -38,9 +38,7 @@ import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
-import com.google.android.material.dialog.InsetDialogOnTouchListener
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.rengwuxian.materialedittext.MaterialEditText
 import com.squareup.picasso.Picasso
@@ -60,6 +58,10 @@ class Home : AppCompatActivity() {
     lateinit var layoutManager : RecyclerView.LayoutManager
 
     lateinit var swipeLayout : SwipeRefreshLayout
+
+    //Banner Slide
+    lateinit var image_list : ArrayList<SlideModel>
+    lateinit var imageSlider : ImageSlider
 
     var adapter: FirebaseRecyclerAdapter<Category, MenuViewHolder>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -202,6 +204,43 @@ class Home : AppCompatActivity() {
                 return true
             }
         })
+
+
+        imageSlider = findViewById(R.id.image_slider)
+        setUpSlider()
+
+    }
+
+    private fun setUpSlider(){
+
+        image_list = ArrayList()
+        var banners = database.getReference("Banner")
+
+        banners.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var foodIds = ArrayList<String>()
+                for(postSnapshot in dataSnapshot.children){
+                    var banner = postSnapshot.getValue(Banner::class.java)
+                    image_list.add(SlideModel(banner?.image!!, banner?.name))
+                    foodIds.add(banner?.id)
+                }
+                imageSlider.setImageList(image_list, true)
+
+                imageSlider.setItemClickListener(object : com.denzcoskun.imageslider.interfaces.ItemClickListener{
+                    override fun onItemSelected(position: Int) {
+                        var intent = Intent(this@Home, FoodDeatils::class.java)
+                        intent.putExtra("foodId", foodIds.get(position))
+                        startActivity(intent)
+                    }
+                })
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+        })
+
 
     }
 
