@@ -3,6 +3,7 @@ package com.dev.eatit
 import android.Manifest
 import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.graphics.Rect
 import android.location.Location
 import android.location.LocationListener
 import androidx.appcompat.app.AppCompatActivity
@@ -11,10 +12,12 @@ import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.graphics.contains
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -255,6 +258,7 @@ class Cart : AppCompatActivity() ,
                     String.format("%s, %s", shipAddress?.latLng?.latitude, shipAddress?.latLng?.longitude),
                     cart
                 )
+                Toast.makeText(this@Cart, shipAddress?.latLng?.latitude.toString() + "," + shipAddress?.latLng?.longitude.toString(), Toast.LENGTH_LONG).show()
 
                 var order_number = System.currentTimeMillis().toString()
 
@@ -276,6 +280,18 @@ class Cart : AppCompatActivity() ,
                     .commit()
             }
         })
+
+
+        alertDialog.setOnDismissListener(object : DialogInterface.OnDismissListener{
+            override fun onDismiss(dialog: DialogInterface?) {
+                dialog?.dismiss()
+                supportFragmentManager.beginTransaction()
+                    .remove(supportFragmentManager.findFragmentById(R.id.place_autocomplete_fragment) as AutocompleteSupportFragment)
+                    .commit()
+            }
+        })
+
+
         alertDialog.show()
     }
 
