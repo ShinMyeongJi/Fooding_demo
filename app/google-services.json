@@ -23,21 +23,13 @@
           }
         },
         {
-          "client_id": "79470006334-fk7e6cde8i2p41m54u9eq9t3898s5mau.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.dev.eatit",
-            "certificate_hash": "04b950fd20388063c835cf893fce0a3d78b20dfd"
-          }
-        },
-        {
           "client_id": "79470006334-9c2vfjrqofi26vmlbedjn8aj19l3n4e9.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDNsRgo2U_j3K_nUanoZcu_fU_u8a2llOY"
+          "current_key": "AIzaSyBTTa-ikBXr3bQdyojOtCwuRTL0mo1MXmk"
         }
       ],
       "services": {
@@ -53,17 +45,17 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:79470006334:android:d1b6b49e308c6ee21d816f",
+        "mobilesdk_app_id": "1:79470006334:android:b5745bf9971cef421d816f",
         "android_client_info": {
-          "package_name": "com.dev.foodingManager"
+          "package_name": "com.dev.foodingmanager"
         }
       },
       "oauth_client": [
         {
-          "client_id": "79470006334-enrk1ol87s84rb1b3po2kucf48n65p67.apps.googleusercontent.com",
+          "client_id": "79470006334-59d7dtquhnuvsqlqpicfet6fnkafrq3m.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.dev.foodingManager",
+            "package_name": "com.dev.foodingmanager",
             "certificate_hash": "93cc842dd4e57d3eb0c0d6c27c126136df91cd1d"
           }
         },
@@ -74,7 +66,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDNsRgo2U_j3K_nUanoZcu_fU_u8a2llOY"
+          "current_key": "AIzaSyBTTa-ikBXr3bQdyojOtCwuRTL0mo1MXmk"
         }
       ],
       "services": {

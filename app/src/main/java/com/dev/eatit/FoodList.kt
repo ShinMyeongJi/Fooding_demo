@@ -24,6 +24,10 @@ import com.dev.eatit.database.Database
 import com.dev.eatit.model.Category
 import com.dev.eatit.model.Food
 import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.share.Share
+import com.facebook.share.Sharer
 import com.facebook.share.model.ShareLinkContent
 import com.facebook.share.model.SharePhoto
 import com.facebook.share.model.SharePhotoContent
@@ -73,15 +77,17 @@ class FoodList : AppCompatActivity() {
             var photo = SharePhoto.Builder()
                 .setBitmap(bitmap)
                 .build()
+            shareDialog = ShareDialog(this@FoodList)
 
             Log.d("photo =>", ShareDialog.canShow(SharePhotoContent::class.java).toString())
-            if(ShareDialog.canShow(SharePhotoContent::class.java)){
+            if(!ShareDialog.canShow(SharePhotoContent::class.java)){
                 Log.d("bitmap=>", photo.imageUrl.toString())
-                var content = SharePhotoContent.Builder()
+                /*var content = SharePhotoContent.Builder()
                     .addPhoto(photo)
-                    .build()
+                    .build()*/
 
-                shareDialog.show(content)
+
+
             }
         }
 
@@ -127,6 +133,8 @@ class FoodList : AppCompatActivity() {
                     }
                 }
             }
+
+
         })
 
         swipeLayout.post(object : Runnable{
@@ -217,14 +225,14 @@ class FoodList : AppCompatActivity() {
                 Picasso.get().load(model?.image).into(foodViewHolder?.food_image)
 
                 //favorites
-                if(localDB.isFavorites(adapter?.getRef(position)?.key)){
+                if(localDB.isFavorites(adapter?.getRef(position)?.key, Common.currentUser.phone)){
                     foodViewHolder?.favorites?.setImageResource(R.drawable.ic_favorite_black_24dp)
                 }
 
                 foodViewHolder?.favorites?.setOnClickListener(object : View.OnClickListener{
                     override fun onClick(v: View?) {
-                        if(!localDB.isFavorites(adapter?.getRef(position)?.key)) {
-                            localDB.addToFavorites(adapter?.getRef(position)?.key)
+                        if(!localDB.isFavorites(adapter?.getRef(position)?.key, Common.currentUser.phone)) {
+                            localDB.addToFavorites(adapter?.getRef(position)?.key, Common.currentUser.phone)
                             foodViewHolder?.favorites?.setImageResource(R.drawable.ic_favorite_black_24dp)
                             Snackbar.make(
                                 recycler_food,
@@ -232,7 +240,7 @@ class FoodList : AppCompatActivity() {
                                 Snackbar.LENGTH_SHORT
                             ).show()
                         }else{
-                            localDB.removeFavorites(adapter?.getRef(position)?.key)
+                            localDB.removeFavorites(adapter?.getRef(position)?.key, Common.currentUser.phone)
                             foodViewHolder?.favorites?.setImageResource(R.drawable.ic_favorite_border_black_24dp)
                         }
                     }
@@ -242,11 +250,13 @@ class FoodList : AppCompatActivity() {
                 foodViewHolder?.share?.setOnClickListener(object : View.OnClickListener{
                     override fun onClick(v: View?) {
                         //Picasso.get().load(model?.image).into(target)
+                        var content = ShareLinkContent.Builder()
+                            .setContentUrl(Uri.parse("https://developers.facebook.com"))
+                            .setImageUrl(Uri.parse(model?.image))
+                            .build()
 
-                        var url = URL(model?.image)
-                        var bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream()) as Bitmap
 
-                        var photo = SharePhoto.Builder()
+                        shareDialog.show(content)
 
 
                     }

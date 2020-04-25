@@ -3,6 +3,7 @@ package com.dev.eatit
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -65,7 +66,7 @@ class Home : AppCompatActivity() {
 
     var adapter: FirebaseRecyclerAdapter<Category, MenuViewHolder>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -171,7 +172,7 @@ class Home : AppCompatActivity() {
         var controller = AnimationUtils.loadLayoutAnimation(recycler_menu.context, R.anim.layout_fall_dimen)
         recycler_menu.layoutAnimation = controller
 
-        updateToken(FirebaseInstanceId.getInstance().token!!)
+       updateToken(FirebaseInstanceId.getInstance().token!!)
 
         navView.setNavigationItemSelectedListener(object : NavigationView.OnNavigationItemSelectedListener{
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -336,6 +337,7 @@ class Home : AppCompatActivity() {
     }
 
     private fun updateToken(tokenRefreshed : String){
+        Log.d("야야양", tokenRefreshed)
         var db = FirebaseDatabase.getInstance()
         var tokens = db.getReference("Tokens")
         var token = Token(tokenRefreshed, false)

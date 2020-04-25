@@ -12,8 +12,19 @@ import android.widget.TextView
 import android.view.View
 import android.widget.Toast
 import com.dev.eatit.common.Common
+import com.dev.eatit.model.Token
 import com.dev.eatit.model.User
-import com.facebook.FacebookSdk
+import com.facebook.*
+import com.facebook.appevents.AppEventsLogger
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import com.facebook.login.widget.LoginButton
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FacebookAuthCredential
+import com.google.firebase.auth.FacebookAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -27,7 +38,14 @@ class MainActivity : AppCompatActivity() {
     lateinit var signUp : Button
     lateinit var signIn : Button
 
+    lateinit var loginButton : LoginButton
 
+    lateinit var mCallbackManager : CallbackManager
+    lateinit var mFirebaseaAuth : FirebaseAuth
+
+    lateinit var authStateListener : FirebaseAuth.AuthStateListener
+
+    lateinit var accessTokenTracker : AccessTokenTracker
     lateinit var slogan : TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +53,47 @@ class MainActivity : AppCompatActivity() {
         FacebookSdk.sdkInitialize(applicationContext)
         signUp = findViewById(R.id.btnSignUp)
         signIn = findViewById(R.id.btnSignIn)
+        loginButton = findViewById(R.id.login_button)
+        loginButton.setPermissions("email", "public_profile")
+
+        mFirebaseaAuth = FirebaseAuth.getInstance()
+        //FacebookSdk.sdkInitialize(getApplicationContext())
+
+        mCallbackManager = CallbackManager.Factory.create()
+        loginButton.registerCallback(mCallbackManager, object : FacebookCallback<LoginResult>{
+            override fun onSuccess(result: LoginResult?) {
+                Toast.makeText(this@MainActivity, "Login Success", Toast.LENGTH_LONG).show()
+                handleFacebookToken(result?.accessToken!!)
+            }
+
+            override fun onCancel() {
+
+            }
+
+            override fun onError(error: FacebookException?) {
+
+            }
+        })
+
+        authStateListener = object : FirebaseAuth.AuthStateListener{
+            override fun onAuthStateChanged(p0: FirebaseAuth) {
+                var user = mFirebaseaAuth.currentUser
+
+            }
+        }
+
+        accessTokenTracker = object : AccessTokenTracker(){
+            override fun onCurrentAccessTokenChanged(
+                oldAccessToken: AccessToken?,
+                currentAccessToken: AccessToken?
+            ) {
+                if(currentAccessToken == null){
+                    Toast.makeText(this@MainActivity, "logout", Toast.LENGTH_SHORT).show()
+                    mFirebaseaAuth.signOut()
+                    LoginManager.getInstance().logOut();
+                }
+            }
+        }
 
         Paper.init(this@MainActivity)
 
@@ -63,6 +122,51 @@ class MainActivity : AppCompatActivity() {
                 login(user, pwd)
             }
         }
+    }
+
+    private fun handleFacebookToken(token : AccessToken){
+        var credential = FacebookAuthProvider.getCredential(token.token)
+        mFirebaseaAuth.signInWithCredential(credential)
+            .addOnCompleteListener(this, object : OnCompleteListener<AuthResult>{
+                override fun onComplete(p0: Task<AuthResult>) {
+                    if(p0.isSuccessful){
+
+                        var user = mFirebaseaAuth.currentUser
+                       // if(p0.result?.additionalUserInfo?.isNewUser!!){
+
+                            //Toast.makeText(this@MainActivity, user?.uid, Toast.LENGTH_SHORT).show()
+                            //Init Firebase
+                            var database = FirebaseDatabase.getInstance()
+                            var table_user = database.getReference("User")
+                            var token = Token(null, false)
+                            database.getReference("Tokens").child(user?.uid!!).setValue(token)
+
+                            table_user.addValueEventListener(object : ValueEventListener{
+                                override fun onDataChange(p0: DataSnapshot) {
+                                    var buildUser = User(user?.displayName, null, null)
+                                    buildUser.phone = user?.uid!!
+                                    if(!p0.child(user?.uid!!).exists()){
+                                        table_user.child(user?.uid!!).setValue(buildUser)
+                                    }
+                                    Common.currentUser = buildUser
+                                    var homeIntent = Intent(this@MainActivity, Home::class.java)
+                                    startActivity(homeIntent)
+                                    finish()
+                                }
+
+                                override fun onCancelled(p0: DatabaseError) {
+
+                                }
+                            })
+                        //}
+
+
+                    }else{
+                        Log.d("으이구", p0.exception.toString())
+                        Toast.makeText(this@MainActivity, "failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            })
     }
 
 
@@ -114,5 +218,22 @@ class MainActivity : AppCompatActivity() {
             override fun onCancelled(p0: DatabaseError) {
             }
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        mCallbackManager.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mFirebaseaAuth.addAuthStateListener(authStateListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if(authStateListener != null){
+            mFirebaseaAuth.removeAuthStateListener(authStateListener)
+        }
     }
 }
