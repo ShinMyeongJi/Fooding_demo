@@ -112,7 +112,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder>{
                 new Database(cart).updateCart(order);
 
                 int total = 0;
-                List<Order> orders = new Database(cart).getCart();
+                List<Order> orders = new Database(cart).getCart(Common.currentUser.getPhone());
                 for(Order orderItem : orders){
                     total += (Integer.parseInt(orderItem.getPrice()) * Integer.parseInt(orderItem.getQuantity()));
                 }

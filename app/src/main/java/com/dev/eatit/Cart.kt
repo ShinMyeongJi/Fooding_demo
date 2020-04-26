@@ -190,7 +190,7 @@ class Cart : AppCompatActivity() ,
     }
 
     private fun loadListFood(){
-        cart = Database(this).cart as ArrayList<Order>
+        cart = Database(this).getCart(Common.currentUser.phone) as ArrayList<Order>
         adapter = CartAdapter(cart, this)
         adapter.notifyDataSetChanged()
         recyclerView.adapter = adapter
@@ -264,7 +264,7 @@ class Cart : AppCompatActivity() ,
 
                 //현재 시간을 key 값으로 input
                 requests.child(order_number).setValue(request)
-                Database(baseContext).cleanCart()
+                Database(baseContext).cleanCart(Common.currentUser.phone)
 
                 sendNotificationOrder(order_number)
 
@@ -364,7 +364,7 @@ class Cart : AppCompatActivity() ,
     private fun deleteCart(order : Int){
         cart.removeAt(order)
         var deleteDb = Database(this@Cart)
-        deleteDb.cleanCart()
+        deleteDb.cleanCart(Common.currentUser.phone)
 
         for(item in cart){
             var newDB = Database(this@Cart)

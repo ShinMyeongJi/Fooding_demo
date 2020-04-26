@@ -3,12 +3,14 @@ package com.dev.eatit
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -41,6 +43,7 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import com.rengwuxian.materialedittext.MaterialEditText
 import com.squareup.picasso.Picasso
 import io.paperdb.Paper
@@ -191,6 +194,8 @@ class Home : AppCompatActivity() {
                     changeHomeAddDialog()
                 }else if(id == R.id.nav_change_pwd) {
                     showChangePasswordDialog()
+                }else if(id == R.id.nav_setting){
+                    showSettingDialog()
                 }else if(id == R.id.logout){
                     //자동 로그인 해제
                     Paper.book().destroy()
@@ -210,6 +215,42 @@ class Home : AppCompatActivity() {
         imageSlider = findViewById(R.id.image_slider)
         setUpSlider()
 
+    }
+
+    private fun showSettingDialog(){
+        var dialogBuilder = AlertDialog.Builder(this@Home)
+        dialogBuilder.setTitle("설정")
+
+        var inflater = LayoutInflater.from(this)
+        var setting_layout = inflater.inflate(R.layout.setting_layout, null)
+
+        var checkBox = setting_layout.findViewById<CheckBox>(R.id.ckb_sub_new)
+
+        Paper.init(this)
+        var isSubscribe = Paper.book().read<String>("sub_new")
+
+        if(isSubscribe == null || TextUtils.isEmpty(isSubscribe) || isSubscribe.equals("false"))
+            checkBox.isChecked = false
+        else
+            checkBox.isChecked = true
+
+        dialogBuilder.setView(setting_layout)
+
+        dialogBuilder.setPositiveButton("확인", object : DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                dialog?.dismiss()
+
+                if(checkBox.isChecked){
+                    FirebaseMessaging.getInstance().subscribeToTopic(Common.topic)
+                    Paper.book().write("sub_new", "true")
+                }else{
+                    FirebaseMessaging.getInstance().subscribeToTopic(Common.topic)
+                    Paper.book().write("sub_new", "false")
+                }
+            }
+        })
+
+        dialogBuilder.show()
     }
 
     private fun setUpSlider(){

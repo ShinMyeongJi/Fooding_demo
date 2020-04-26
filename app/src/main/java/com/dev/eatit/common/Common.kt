@@ -12,6 +12,7 @@ import retrofit2.Retrofit
 
 class Common {
     companion object{
+        var topic = "News"
         lateinit var currentUser : User
         val FOOD_ID = "FoodId"
         private val BASE_URL = "https://fcm.googleapis.com/"

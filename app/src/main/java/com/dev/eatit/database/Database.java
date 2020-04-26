@@ -21,23 +21,44 @@ public class Database extends SQLiteAssetHelper{
         super(context, DB_NAME, null, DB_VER);
     }
 
-    //cart 정보 get
-    public List<Order> getCart(){
+    public boolean checkExistFood(String userPhone, String productId){
+        boolean flag = false;
+
+        SQLiteDatabase db = getReadableDatabase();
+        SQLiteQueryBuilder query = new SQLiteQueryBuilder();
+        Cursor cursor = null;
+
+        String SQLQuery = String.format("SELECT * FROM OrderDetail WHERE UserPhone='%s' AND ProductId='%s'", userPhone, productId);
+        cursor = db.rawQuery(SQLQuery, null);
+
+        if(cursor.getCount() > 0)
+            flag = true;
+        else
+            flag = false;
+
+        cursor.close();
+        return flag;
+
+    }
+
+
+    //db에서 cart 정보 get
+    public List<Order> getCart(String userPhone){
         SQLiteDatabase db = getReadableDatabase();
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
-        String[] sqlSelect = {"ID", "ProductId", "ProductName", "Quantity", "Price", "Discount", "Image"};
+        String[] sqlSelect = {"UserPhone", "ProductId", "ProductName", "Quantity", "Price", "Discount", "Image"};
         String sqlTable = "OrderDetail";
 
         queryBuilder.setTables(sqlTable);
-        Cursor c = queryBuilder.query(db, sqlSelect, null, null, null, null, null);
+        Cursor c = queryBuilder.query(db, sqlSelect, "UserPhone=?", new String[]{userPhone}, null, null, null);
 
         final List<Order> result = new ArrayList<>();
         if(c.moveToFirst()){
             do{
                 result.add(
                         new Order(
-                        c.getInt(c.getColumnIndex("ID")),
+                        c.getString(c.getColumnIndex("UserPhone")),
                         c.getString(c.getColumnIndex("ProductId")),
                         c.getString(c.getColumnIndex("ProductName")),
                         c.getString(c.getColumnIndex("Quantity")),
@@ -54,7 +75,8 @@ public class Database extends SQLiteAssetHelper{
     //db에 주문 정보 put
     public void addCart(Order order){
         SQLiteDatabase db = getReadableDatabase();
-        String query = String.format("INSERT INTO OrderDetail(ProductId, ProductName, Quantity, Price, Discount, Image) VALUES ('%s', '%s', '%s', '%s', '%s', '%s');",
+        String query = String.format("INSERT OR REPLACE INTO OrderDetail(UserPhone, ProductId, ProductName, Quantity, Price, Discount, Image) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s');",
+                order.getUserPhone(),
                 order.getProductId(),
                 order.getProductName(),
                 order.getQuantity(),
@@ -65,9 +87,22 @@ public class Database extends SQLiteAssetHelper{
         db.execSQL(query);
     }
 
-    public void cleanCart(){
+    public void cleanCart(String userPhone){
         SQLiteDatabase db = getReadableDatabase();
-        String query = String.format("DELETE FROM OrderDetail");
+        String query = String.format("DELETE FROM OrderDetail WHERE UserPhone='%s'", userPhone);
+        db.execSQL(query);
+    }
+
+    public void updateCart(Order order){
+        SQLiteDatabase db = getReadableDatabase();
+        String query = String.format("UPDATE OrderDetail SET Quantity = '%s' WHERE UserPhone = '%s' AND ProductId='%s'", order.getQuantity(), order.getUserPhone(), order.getProductId());
+        db.execSQL(query);
+    }
+
+
+    public void increaseCart(String userPhone, String foodId){
+        SQLiteDatabase db = getReadableDatabase();
+        String query = String.format("UPDATE OrderDetail SET Quantity = Quantity+1 WHERE UserPhone = '%s' AND ProductId='%s'", userPhone, foodId);
         db.execSQL(query);
     }
 
@@ -99,11 +134,7 @@ public class Database extends SQLiteAssetHelper{
         return true;
     }
 
-    public void updateCart(Order order){
-        SQLiteDatabase db = getReadableDatabase();
-        String query = String.format("UPDATE OrderDetail SET Quantity = %s WHERE ID = %d", order.getQuantity(), order.getID());
-        db.execSQL(query);
-    }
+
 
 
 }

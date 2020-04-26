@@ -98,17 +98,27 @@ class FoodDeatils : AppCompatActivity(), RatingDialogListener {
 
         btnCart.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
-                Database(baseContext).addCart(
-                    Order(
-                        foodId,
-                        currentFood.name,
-                        numberButton.number,
-                        currentFood.price,
-                        currentFood.discount,
-                        currentFood.image
+                var isExist = Database(baseContext).checkExistFood(Common.currentUser.phone, foodId)
+                if(!isExist) {
+                    Database(baseContext).addCart(
+                        Order(
+                            Common.currentUser.phone,
+                            foodId,
+                            currentFood.name,
+                            numberButton.number,
+                            currentFood.price,
+                            currentFood.discount,
+                            currentFood.image
+                        )
                     )
-                )
+
+                }else{
+                    var newDB = Database(baseContext)
+                    newDB.increaseCart(Common.currentUser.phone, foodId)
+                }
+
                 Toast.makeText(this@FoodDeatils, "Added to Cart", Toast.LENGTH_LONG).show()
+
             }
         })
 
