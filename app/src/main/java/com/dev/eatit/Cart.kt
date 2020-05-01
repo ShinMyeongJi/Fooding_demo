@@ -3,25 +3,24 @@ package com.dev.eatit
 import android.Manifest
 import android.content.DialogInterface
 import android.content.pm.PackageManager
-import android.graphics.Rect
+import android.graphics.Color
 import android.location.Location
-import android.location.LocationListener
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
-import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.graphics.contains
-import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.dev.eatit.Interface.RecyclerItemTouchHelper
+import com.dev.eatit.Interface.RecyclerItemTouchHelperListener
 import com.dev.eatit.ViewHolder.CartAdapter
+import com.dev.eatit.ViewHolder.CartViewHolder
 import com.dev.eatit.common.Common
 import com.dev.eatit.database.Database
 import com.dev.eatit.model.*
@@ -29,31 +28,25 @@ import com.dev.eatit.remote.ApiService
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.GooglePlayServicesUtil
-import com.google.android.gms.common.api.GoogleApi
-import com.google.android.gms.common.api.GoogleApiActivity
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import com.rengwuxian.materialedittext.MaterialEditText
-import kotlinx.android.synthetic.main.activity_food_deatils.view.*
 import retrofit2.Call
 import retrofit2.Response
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig
-import java.lang.NumberFormatException
 import java.text.NumberFormat
 import java.util.*
-import javax.security.auth.callback.Callback
 
 class Cart : AppCompatActivity() ,
     GoogleApiClient.ConnectionCallbacks,
-    GoogleApiClient.OnConnectionFailedListener{
+    GoogleApiClient.OnConnectionFailedListener, RecyclerItemTouchHelperListener {
 
     lateinit var recyclerView : RecyclerView
     lateinit var layoutManager : RecyclerView.LayoutManager
@@ -69,6 +62,8 @@ class Cart : AppCompatActivity() ,
 
     lateinit var mService : ApiService //푸시 서비스
     lateinit var placeClient : PlacesClient;
+
+    lateinit var rootLayout : RelativeLayout
     var shipAddress : Place? = null
     var placeFields = Arrays.asList(
         Place.Field.ID,
@@ -125,6 +120,12 @@ class Cart : AppCompatActivity() ,
 
         txtTotal = findViewById(R.id.totalPrice)
         btnPlace = findViewById(R.id.btnPlaceOrder)
+
+        rootLayout = findViewById(R.id.rootLayout)
+
+        //삭제
+        var itemTouchHelperCallback = RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this)
+        var res = ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView)
 
         mService = Common.getFCMService()!!
         if (!Places.isInitialized()) {
@@ -402,6 +403,49 @@ class Cart : AppCompatActivity() ,
         mFusedClient.requestLocationUpdates(mLocationRequest, locationCallback, Looper.myLooper())
     }
 
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int, position: Int) {
+        if(viewHolder is CartViewHolder){
+            var name = (recyclerView.adapter as CartAdapter).getItem(viewHolder.adapterPosition).getProductName()
+
+            var deleteItem = (recyclerView.adapter as CartAdapter).getItem(viewHolder.adapterPosition)
+            var deleteIndex = viewHolder.adapterPosition
+
+            adapter.removeItem(deleteIndex)
+            var newDB = Database(baseContext).removeFromCart(deleteItem.productId, Common.currentUser.phone)
+
+            var total = 0
+            val orders =
+                Database(baseContext).getCart(Common.currentUser.phone)
+            for (orderItem in orders) {
+                total += orderItem.price.toInt() * orderItem.quantity.toInt()
+            }
+
+            val fmt = NumberFormat.getCurrencyInstance(Locale.KOREA)
+
+            txtTotal.setText(fmt.format(total.toLong()))
+
+            var snackbar = Snackbar.make(rootLayout, name + "가 삭제되었습니다.", Snackbar.LENGTH_SHORT)
+            snackbar.setAction("실행 취소", object : View.OnClickListener{
+                override fun onClick(v: View?) {
+                    adapter.restoreItem(deleteItem, deleteIndex)
+
+                    var newDB = Database(baseContext).addCart(deleteItem)
+                    var total = 0
+                    val orders =
+                        Database(baseContext).getCart(Common.currentUser.phone)
+                    for (orderItem in orders) {
+                        total += orderItem.price.toInt() * orderItem.quantity.toInt()
+                    }
+
+                    val fmt = NumberFormat.getCurrencyInstance(Locale.KOREA)
+
+                    txtTotal.setText(fmt.format(total.toLong()))
+                }
+            })
+            snackbar.setActionTextColor(Color.BLUE)
+            snackbar.show()
+        }
+    }
 
 
 }

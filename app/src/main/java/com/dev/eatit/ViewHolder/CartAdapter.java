@@ -27,54 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-class CartViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener{
-
-    public TextView text_cart_name, text_cart_price;
-    public ImageView cart_image;
-    public ElegantNumberButton btnQuantity;
-
-    private ItemClickListener itemClickListener;
-
-    public TextView getText_cart_name() {
-        return text_cart_name;
-    }
-
-    public void setText_cart_name(TextView text_cart_name) {
-        this.text_cart_name = text_cart_name;
-    }
-
-    public TextView getText_cart_price() {
-        return text_cart_price;
-    }
-
-    public void setText_cart_price(TextView text_cart_price) {
-        this.text_cart_price = text_cart_price;
-    }
-
-    public void setItemClickListener(ItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
-    }
-
-    public CartViewHolder(@NonNull View itemView) {
-        super(itemView);
-        text_cart_name = itemView.findViewById(R.id.cart_item_name);
-        text_cart_price = itemView.findViewById(R.id.cart_item_price);
-        btnQuantity = itemView.findViewById(R.id.btnQuantity);
-        cart_image = itemView.findViewById(R.id.cart_image);
-
-        itemView.setOnCreateContextMenuListener(this);
-    }
-
-    @Override
-    public void onClick(View v) {
-
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, 0, getAdapterPosition(), Common.Companion.getDELETE());
-    }
-}
 
 public class CartAdapter extends RecyclerView.Adapter<CartViewHolder>{
 
@@ -137,5 +89,19 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder>{
     @Override
     public int getItemCount() {
         return listData.size();
+    }
+
+    public Order getItem(int position) {
+        return listData.get(position);
+    }
+
+    public void removeItem(int position){
+        listData.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void restoreItem(Order item, int position){
+        listData.add(position, item);
+        notifyItemInserted(position);
     }
 }
