@@ -433,8 +433,8 @@ class Home : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId == R.id.refresh){
-            loadMenu()
+        if(item.itemId == R.id.nav_search){
+            startActivity(Intent(this@Home, SearchActivity::class.java))
         }
 
         return super.onOptionsItemSelected(item)

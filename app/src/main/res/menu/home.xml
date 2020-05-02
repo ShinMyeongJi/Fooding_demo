@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/refresh"
-        android:icon="@drawable/ic_refresh_black_24dp"
+        android:id="@+id/nav_search"
+        android:icon="@drawable/ic_search_black_24dp"
         android:iconTint="@android:color/white"
-        android:title="새로고침"
+        android:title="검색"
+        app:showAsAction="always"
         />
 
 </menu>

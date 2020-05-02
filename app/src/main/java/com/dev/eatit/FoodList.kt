@@ -250,13 +250,13 @@ class FoodList : AppCompatActivity() {
                 foodViewHolder?.share?.setOnClickListener(object : View.OnClickListener{
                     override fun onClick(v: View?) {
                         //Picasso.get().load(model?.image).into(target)
-                        var content = ShareLinkContent.Builder()
+                        /*var content = ShareLinkContent.Builder()
                             .setContentUrl(Uri.parse("https://developers.facebook.com"))
                             .setImageUrl(Uri.parse(model?.image))
-                            .build()
+                            .build()*/
 
 
-                        shareDialog.show(content)
+                        //shareDialog.show(content)
 
 
                     }
@@ -295,6 +295,8 @@ class FoodList : AppCompatActivity() {
                        var food = snapShots.getValue(Food::class.java)
                        suggestionList.add(food?.name.toString())
                     }
+
+                    searchBar.lastSuggestions = suggestionList
                 }
 
                 override fun onCancelled(p0: DatabaseError) {
