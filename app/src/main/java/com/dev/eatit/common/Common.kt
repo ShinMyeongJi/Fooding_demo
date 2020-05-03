@@ -15,6 +15,7 @@ class Common {
         var topic = "News"
         lateinit var currentUser : User
         val FOOD_ID = "FoodId"
+        var restaurantSelected = ""
         private val BASE_URL = "https://fcm.googleapis.com/"
 
         fun getFCMService(): ApiService? {

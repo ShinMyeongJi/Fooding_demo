@@ -57,7 +57,7 @@ class SearchActivity : AppCompatActivity() {
         shareDialog = ShareDialog(this)
 
         database = FirebaseDatabase.getInstance()
-        foodList = database.getReference("Food")
+        foodList = database.getReference("Restaurants").child(Common.restaurantSelected).child("detail").child("Food")
 
         recycler_search = findViewById(R.id.recycler_search) as RecyclerView
         recycler_search.setHasFixedSize(true)

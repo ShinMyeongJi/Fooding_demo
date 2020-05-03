@@ -134,7 +134,6 @@ class MainActivity : AppCompatActivity() {
                         var user = mFirebaseaAuth.currentUser
                        // if(p0.result?.additionalUserInfo?.isNewUser!!){
 
-                            //Toast.makeText(this@MainActivity, user?.uid, Toast.LENGTH_SHORT).show()
                             //Init Firebase
                             var database = FirebaseDatabase.getInstance()
                             var table_user = database.getReference("User")
@@ -149,7 +148,7 @@ class MainActivity : AppCompatActivity() {
                                         table_user.child(user?.uid!!).setValue(buildUser)
                                     }
                                     Common.currentUser = buildUser
-                                    var homeIntent = Intent(this@MainActivity, Home::class.java)
+                                    var homeIntent = Intent(this@MainActivity, RestaurantList::class.java)
                                     startActivity(homeIntent)
                                     finish()
                                 }
@@ -162,7 +161,6 @@ class MainActivity : AppCompatActivity() {
 
 
                     }else{
-                        Log.d("으이구", p0.exception.toString())
                         Toast.makeText(this@MainActivity, "failed", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -200,7 +198,7 @@ class MainActivity : AppCompatActivity() {
                     user?.phone = phone
                     if (user!!.password.equals(pwd))
                     {
-                        var homeIntent = Intent(this@MainActivity, Home::class.java)
+                        var homeIntent = Intent(this@MainActivity, RestaurantList::class.java)
                         Common.currentUser = user
                         startActivity(homeIntent)
                         finish()

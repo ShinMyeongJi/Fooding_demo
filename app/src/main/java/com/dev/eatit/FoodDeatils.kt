@@ -55,7 +55,7 @@ class FoodDeatils : AppCompatActivity(), RatingDialogListener {
         setContentView(R.layout.activity_food_deatils)
 
         database = FirebaseDatabase.getInstance()
-        food = database.getReference("Food")
+        food = database.getReference("Restaurants").child(Common.restaurantSelected).child("detail").child("Food")
         ratingTbl = database.getReference("Rating")
 
         numberButton = findViewById(R.id.number_button)

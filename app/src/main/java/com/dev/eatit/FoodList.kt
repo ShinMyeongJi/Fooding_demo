@@ -101,7 +101,7 @@ class FoodList : AppCompatActivity() {
         shareDialog = ShareDialog(this)
 
         database = FirebaseDatabase.getInstance()
-        foodList = database.getReference("Food")
+        foodList = database.getReference("Restaurants").child(Common.restaurantSelected).child("detail").child("Food")
 
         swipeLayout = findViewById(R.id.swipe_layout)
 

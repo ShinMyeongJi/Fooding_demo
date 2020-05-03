@@ -75,7 +75,7 @@ class SignIn : AppCompatActivity(){
                                 user?.phone = edtPhone.text.toString()
                                 if (user!!.password.equals(edtPassword.text.toString())) {
                                     mDialog.dismiss()
-                                    var homeIntent = Intent(this@SignIn, Home::class.java)
+                                    var homeIntent = Intent(this@SignIn, RestaurantList::class.java)
                                     Common.currentUser = user
                                     startActivity(homeIntent)
                                     finish()

@@ -76,7 +76,7 @@ class Home : AppCompatActivity() {
 
         //Firebase 초기화
         database = FirebaseDatabase.getInstance()
-        category = database.getReference("Category")
+        category = database.getReference("Restaurants").child(Common.restaurantSelected).child("detail").child("Category")
 
         swipeLayout = findViewById(R.id.swipeLayout)
         swipeLayout.setColorSchemeResources(
@@ -135,7 +135,6 @@ class Home : AppCompatActivity() {
                         var menuIdIntent = Intent(this@Home, FoodList::class.java)
                         menuIdIntent.putExtra("CategoryId", adapter?.getRef(position)?.key)
                         startActivity(menuIdIntent);
-                        //Toast.makeText(this@Home, "" + clickItem.name, Toast.LENGTH_LONG).show()
                     }
                 })
             }
@@ -256,7 +255,7 @@ class Home : AppCompatActivity() {
     private fun setUpSlider(){
 
         image_list = ArrayList()
-        var banners = database.getReference("Banner")
+        var banners = database.getReference("Restaurants").child(Common.restaurantSelected).child("detail").child("Banner")
 
         banners.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -386,39 +385,6 @@ class Home : AppCompatActivity() {
     }
 
     fun loadMenu(){
-       /* var options = FirebaseRecyclerOptions.Builder<Category>()
-            .setQuery(category, Category::class.java)
-            .build()
-
-        adapter = object : FirebaseRecyclerAdapter<Category, MenuViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MenuViewHolder {
-                var itemView = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.menu_item, parent, false)
-                var viewHolder = MenuViewHolder(itemView)
-                return viewHolder
-            }
-
-            override fun onBindViewHolder(viewHolder: MenuViewHolder, position: Int, model: Category) {
-                viewHolder?.txtMenuName?.setText(model?.name)
-                Picasso.get().load(model?.image).into(viewHolder?.imageView)
-                var clickItem = model as Category
-
-                viewHolder?.setItemClickListener(object : ItemClickListener {
-                    override fun onClick(
-                        view: android.view.View,
-                        position: Int,
-                        isLongClick: Boolean
-                    ) {
-                        //클릭 시 새 activity에 menuId를 보내 줌
-                        var menuIdIntent = Intent(this@Home, FoodList::class.java)
-                        menuIdIntent.putExtra("CategoryId", adapter?.getRef(position)?.key)
-                        startActivity(menuIdIntent);
-                        //Toast.makeText(this@Home, "" + clickItem.name, Toast.LENGTH_LONG).show()
-                    }
-                })
-            }
-        }
-*/
         adapter?.startListening()
         recycler_menu.adapter = adapter
         swipeLayout.isRefreshing = false
