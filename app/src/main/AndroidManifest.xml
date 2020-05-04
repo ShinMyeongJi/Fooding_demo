@@ -15,7 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".RestaurantList"></activity>
+        <activity android:name=".DaumAddressActivity"></activity>
+        <activity android:name=".RestaurantList" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".TestActivity" />
         <activity android:name=".ShowComment" />

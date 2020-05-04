@@ -2,6 +2,7 @@ package com.dev.eatit
 
 import android.Manifest
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
@@ -136,6 +137,7 @@ class Cart : AppCompatActivity() ,
         btnPlace.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
                 if(cart.size > 0) {
+
                     showAlertDialog()
                 }else{
 
@@ -215,7 +217,7 @@ class Cart : AppCompatActivity() ,
         var order_address_comment = inflater.inflate(R.layout.order_address_comment, null)
 
         //var edtAddress = order_address_comment.findViewById<MaterialEditText>(R.id.edtAddress)
-        var edtAddress = supportFragmentManager.findFragmentById(R.id.place_autocomplete_fragment) as AutocompleteSupportFragment
+        /*var edtAddress = supportFragmentManager.findFragmentById(R.id.place_autocomplete_fragment) as AutocompleteSupportFragment
         edtAddress.setCountry("KR")
 
         edtAddress.setPlaceFields(placeFields)
@@ -230,19 +232,27 @@ class Cart : AppCompatActivity() ,
             override fun onError(p0: Status) {
 
             }
+        })*/
+
+        var edtAddress = order_address_comment.findViewById<MaterialEditText>(R.id.edtAddress)
+        var edtComment = order_address_comment.findViewById<MaterialEditText>(R.id.edtComment)
+        //var get_home_address = order_address_comment.findViewById<RadioButton>(R.id.get_home_address)
+
+        edtAddress.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                var intent = Intent(this@Cart, DaumAddressActivity::class.java)
+                startActivity(intent)
+            }
         })
 
-        var edtComment = order_address_comment.findViewById<MaterialEditText>(R.id.edtComment)
-        var get_home_address = order_address_comment.findViewById<RadioButton>(R.id.get_home_address)
-
-        get_home_address.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener{
+        /*get_home_address.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener{
             override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
                 if(isChecked){
                     if(Common.currentUser.homeAddress != null)
                         edtAddress.view?.findViewById<EditText>(R.id.places_autocomplete_search_input)?.setText(Common.currentUser.homeAddress)
                 }
             }
-        })
+        })*/
 
         alertDialog.setView(order_address_comment)
         alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp)
@@ -276,9 +286,9 @@ class Cart : AppCompatActivity() ,
         alertDialog.setNegativeButton("No", object : DialogInterface.OnClickListener{
             override fun onClick(dialog: DialogInterface?, which: Int) {
                 dialog?.dismiss()
-                supportFragmentManager.beginTransaction()
+                /*supportFragmentManager.beginTransaction()
                     .remove(supportFragmentManager.findFragmentById(R.id.place_autocomplete_fragment) as AutocompleteSupportFragment)
-                    .commit()
+                    .commit()*/
             }
         })
 
@@ -286,9 +296,9 @@ class Cart : AppCompatActivity() ,
         alertDialog.setOnDismissListener(object : DialogInterface.OnDismissListener{
             override fun onDismiss(dialog: DialogInterface?) {
                 dialog?.dismiss()
-                supportFragmentManager.beginTransaction()
+                /*supportFragmentManager.beginTransaction()
                     .remove(supportFragmentManager.findFragmentById(R.id.place_autocomplete_fragment) as AutocompleteSupportFragment)
-                    .commit()
+                    .commit()*/
             }
         })
 
