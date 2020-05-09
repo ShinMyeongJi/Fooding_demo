@@ -1,18 +1,22 @@
 package com.dev.eatit
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 
 class DaumAddressActivity : AppCompatActivity() {
 
     lateinit var webView : WebView
-
+    lateinit var handler : Handler
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_daum_address)
-
+        handler = Handler()
         init_webView()
 
     }
@@ -23,6 +27,7 @@ class DaumAddressActivity : AppCompatActivity() {
         webView.settings.javaScriptEnabled = true
         webView.settings.setSupportMultipleWindows(true)
         webView.settings.javaScriptCanOpenWindowsAutomatically = true
+        webView.addJavascriptInterface(AndroidBridge(), "AddressCallback")
         /*webView.settings.useWideViewPort = true
         webView.settings.loadWithOverviewMode = true*/
 
@@ -72,5 +77,20 @@ class DaumAddressActivity : AppCompatActivity() {
         }*/
 
         webView.loadUrl("http://112.170.96.54:8009/address")
+    }
+
+    inner class AndroidBridge{
+        @JavascriptInterface
+        fun setAddress(arg1: String, arg2 : String, arg3 : String){
+            handler.post(object : Runnable{
+                override fun run() {
+                    var intent = Intent(this@DaumAddressActivity, MainActivity::class.java)
+                    intent.putExtra("address", String.format("(%s) %s %s", arg1, arg2, arg3))
+                    setResult(Activity.RESULT_OK, intent)
+                    init_webView()
+                    finish()
+                }
+            })
+        }
     }
 }

@@ -23,13 +23,20 @@
                 />
 -->
 
-            <com.rengwuxian.materialedittext.MaterialEditText
+            <!--<com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/edtAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
                 android:hint="주소"
-                />
+                />-->
+
+            <TextView
+                android:id="@+id/edtAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:hint="주소"/>
 
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/edtComment"

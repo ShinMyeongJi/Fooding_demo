@@ -85,8 +85,11 @@ class Cart : AppCompatActivity() ,
         val DISPLACEMENT = 10
         val LOCATION_REQUEST_CODE = 9999
         val PLAY_SERVICES_REQUEST = 9997
+        val ADDRESS_REQUEST_CODE = 1001
     }
 
+
+    lateinit var edtAddress : TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
@@ -234,16 +237,18 @@ class Cart : AppCompatActivity() ,
             }
         })*/
 
-        var edtAddress = order_address_comment.findViewById<MaterialEditText>(R.id.edtAddress)
+        edtAddress = order_address_comment.findViewById<TextView>(R.id.edtAddress)
         var edtComment = order_address_comment.findViewById<MaterialEditText>(R.id.edtComment)
         //var get_home_address = order_address_comment.findViewById<RadioButton>(R.id.get_home_address)
 
         edtAddress.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
                 var intent = Intent(this@Cart, DaumAddressActivity::class.java)
-                startActivity(intent)
+                startActivityForResult(intent, ADDRESS_REQUEST_CODE)
             }
         })
+
+
 
         /*get_home_address.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener{
             override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
@@ -305,6 +310,19 @@ class Cart : AppCompatActivity() ,
 
         alertDialog.show()
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == ADDRESS_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                edtAddress.setText(data?.getStringExtra("address"))
+            } else {   // RESULT_CANCEL
+
+            }
+        }
+    }
+
 
     private fun sendNotificationOrder(order_number : String){
         var tokens = database.getReference("Tokens")
