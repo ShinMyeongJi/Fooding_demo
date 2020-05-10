@@ -1,6 +1,7 @@
 package com.dev.eatit
 
 import android.Manifest
+import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -37,6 +38,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import com.rengwuxian.materialedittext.MaterialEditText
@@ -212,12 +214,11 @@ class Cart : AppCompatActivity() ,
     }
 
     private fun showAlertDialog(){
-        var alertDialog = AlertDialog.Builder(this@Cart)
-        alertDialog.setTitle("주소입력")
-        alertDialog.setMessage("주소를 입력하세요 : ")
-
+        var builder = AlertDialog.Builder(this@Cart, R.style.RoundedDialog)
+        builder.setTitle("주문 정보를 입력해주세요")
         var inflater = this.layoutInflater
         var order_address_comment = inflater.inflate(R.layout.order_address_comment, null)
+
 
         //var edtAddress = order_address_comment.findViewById<MaterialEditText>(R.id.edtAddress)
         /*var edtAddress = supportFragmentManager.findFragmentById(R.id.place_autocomplete_fragment) as AutocompleteSupportFragment
@@ -239,7 +240,7 @@ class Cart : AppCompatActivity() ,
 
         edtAddress = order_address_comment.findViewById<TextView>(R.id.edtAddress)
         var edtComment = order_address_comment.findViewById<MaterialEditText>(R.id.edtComment)
-        //var get_home_address = order_address_comment.findViewById<RadioButton>(R.id.get_home_address)
+        var get_home_address = order_address_comment.findViewById<RadioButton>(R.id.get_home_address)
 
         edtAddress.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
@@ -250,19 +251,18 @@ class Cart : AppCompatActivity() ,
 
 
 
-        /*get_home_address.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener{
+        get_home_address.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener{
             override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
                 if(isChecked){
                     if(Common.currentUser.homeAddress != null)
-                        edtAddress.view?.findViewById<EditText>(R.id.places_autocomplete_search_input)?.setText(Common.currentUser.homeAddress)
+                        edtAddress.setText(Common.currentUser.homeAddress)
                 }
             }
-        })*/
+        })
 
-        alertDialog.setView(order_address_comment)
-        alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp)
+        builder.setView(order_address_comment)
 
-        alertDialog.setPositiveButton("Yes", object : DialogInterface.OnClickListener{
+        builder.setPositiveButton("Yes", object : DialogInterface.OnClickListener{
             override fun onClick(dialog: DialogInterface?, which: Int) {
                 var request = Request(
                     Common.currentUser.phone,
@@ -288,7 +288,7 @@ class Cart : AppCompatActivity() ,
             }
         })
 
-        alertDialog.setNegativeButton("No", object : DialogInterface.OnClickListener{
+        builder.setNegativeButton("No", object : DialogInterface.OnClickListener{
             override fun onClick(dialog: DialogInterface?, which: Int) {
                 dialog?.dismiss()
                 /*supportFragmentManager.beginTransaction()
@@ -298,7 +298,7 @@ class Cart : AppCompatActivity() ,
         })
 
 
-        alertDialog.setOnDismissListener(object : DialogInterface.OnDismissListener{
+        builder.setOnDismissListener(object : DialogInterface.OnDismissListener{
             override fun onDismiss(dialog: DialogInterface?) {
                 dialog?.dismiss()
                 /*supportFragmentManager.beginTransaction()
@@ -307,7 +307,7 @@ class Cart : AppCompatActivity() ,
             }
         })
 
-
+        var alertDialog = builder.create()
         alertDialog.show()
     }
 

@@ -5,8 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardElevation="10dp"
-    app:cardCornerRadius="0dp"
-    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="10dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginBottom="16dp"
+    android:elevation="10dp"
     >
 
     <LinearLayout
@@ -37,6 +40,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Name of Food"
+                android:textStyle="bold"
                 android:layout_weight="8"
                 android:textSize="20sp"
                 />
@@ -66,7 +70,7 @@
             android:layout_height="wrap_content"
             android:text="100"
             android:layout_weight="8"
-            android:textSize="20sp"
+            android:textSize="14sp"
             />
 
 

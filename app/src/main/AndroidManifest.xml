@@ -30,7 +30,7 @@
 
         <activity
             android:name=".Home"
-            android:label="@string/title_activity_home"
+            android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".OrderStatus" />
         <activity android:name=".Cart" />

@@ -8,4 +8,8 @@
     <color name="overlayBackground">#7f333639</color>
     <color name="overlayActionBar">#0e0d0e</color>
     <color name="deleteBgColor">#fa3142</color>
+    <color name="transparency">#00FFFFFF</color>
+    <color name="dialogBackground">#fffffa</color>
+    <color name="grey">#8f8f8f</color>
+    <color name="background_color">#f2f2f2</color>
 </resources>

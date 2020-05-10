@@ -72,6 +72,7 @@ class Home : AppCompatActivity() {
          super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
+
         setSupportActionBar(toolbar)
 
         //Firebase 초기화
@@ -152,6 +153,7 @@ class Home : AppCompatActivity() {
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -174,7 +176,7 @@ class Home : AppCompatActivity() {
         var controller = AnimationUtils.loadLayoutAnimation(recycler_menu.context, R.anim.layout_fall_dimen)
         recycler_menu.layoutAnimation = controller
 
-       updateToken(FirebaseInstanceId.getInstance().token!!)
+        updateToken(FirebaseInstanceId.getInstance().token!!)
 
         navView.setNavigationItemSelectedListener(object : NavigationView.OnNavigationItemSelectedListener{
             override fun onNavigationItemSelected(item: MenuItem): Boolean {

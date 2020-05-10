@@ -39,7 +39,7 @@ class SearchActivity : AppCompatActivity() {
 
     lateinit var adapter : FirebaseRecyclerAdapter<Food, FoodViewHolder>
 
-    lateinit var searchAdapter : FirebaseRecyclerAdapter<Food, FoodViewHolder>
+    var searchAdapter : FirebaseRecyclerAdapter<Food, FoodViewHolder>? = null
     lateinit var materialSearchBar : MaterialSearchBar
     var suggestionList : ArrayList<String> = ArrayList()
 
@@ -254,7 +254,7 @@ class SearchActivity : AppCompatActivity() {
         if(adapter != null)
             adapter.stopListening()
         if(searchAdapter != null)
-            searchAdapter.stopListening()
+            searchAdapter?.stopListening()
 
         super.onStop()
 

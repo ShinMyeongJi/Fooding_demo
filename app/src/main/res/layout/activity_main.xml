@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -14,7 +14,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="250dp"
+            android:layout_width="300dp"
             android:layout_height="125dp"
             android:background="@drawable/fooding_logo"></ImageView>
 
@@ -32,38 +32,44 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
+        android:weightSum="3"
         android:layout_alignParentBottom="true">
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/login_button"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="50dp" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        android:layout_alignParentBottom="true">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:cardCornerRadius="10dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp">
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/login_button"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:textSize="15sp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                />
+        </androidx.cardview.widget.CardView>
 
         <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="SignUp"
+            android:text="가입하기"
             android:id="@+id/btnSignUp"
             android:background="@drawable/round_button"
             android:textColor="@android:color/white"
-            android:layout_margin="8dp"/>
+            android:layout_margin="8dp"
+            />
 
         <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="SignIn"
+            android:text="로그인"
             android:id="@+id/btnSignIn"
             android:background="@drawable/round_button"
             android:textColor="@android:color/white"
