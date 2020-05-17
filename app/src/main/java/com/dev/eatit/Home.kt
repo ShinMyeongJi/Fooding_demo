@@ -182,12 +182,12 @@ class Home : AppCompatActivity() {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 var id = item.itemId
 
-                if(id == R.id.nav_menu){
+                /*if(id == R.id.nav_menu){
 
                 }else if(id == R.id.nav_cart){
                     var cartIntent = Intent(this@Home, Cart::class.java)
                     startActivity(cartIntent)
-                }else if(id == R.id.nav_orders){
+                }else */if(id == R.id.nav_orders){
                     var orderIntent = Intent(this@Home, OrderStatus::class.java)
                     orderIntent.putExtra("userPhone", Common.currentUser.phone)
                     startActivity(orderIntent)
@@ -219,7 +219,7 @@ class Home : AppCompatActivity() {
     }
 
     private fun showSettingDialog(){
-        var dialogBuilder = AlertDialog.Builder(this@Home)
+        var dialogBuilder = AlertDialog.Builder(this@Home, R.style.RoundedDialog)
         dialogBuilder.setTitle("설정")
 
         var inflater = LayoutInflater.from(this)
@@ -288,7 +288,7 @@ class Home : AppCompatActivity() {
     }
 
     private fun showChangePasswordDialog(){
-        var dialogBuilder = AlertDialog.Builder(this@Home)
+        var dialogBuilder = AlertDialog.Builder(this@Home, R.style.RoundedDialog)
         dialogBuilder.setTitle("비밀번호 변경")
 
         var inflater = LayoutInflater.from(this)
@@ -345,7 +345,7 @@ class Home : AppCompatActivity() {
 
     private fun changeHomeAddDialog(){
 
-        var dialogBuilder = AlertDialog.Builder(this@Home)
+        var dialogBuilder = AlertDialog.Builder(this@Home, R.style.RoundedDialog)
         dialogBuilder.setTitle("집 주소 변경")
 
         var inflater = LayoutInflater.from(this)

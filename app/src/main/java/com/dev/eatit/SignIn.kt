@@ -108,7 +108,7 @@ class SignIn : AppCompatActivity(){
     }
 
     private fun showForgotPwdDialog(){
-        var builder = AlertDialog.Builder(this@SignIn)
+        var builder = AlertDialog.Builder(this@SignIn, R.style.RoundedDialog)
         builder.setTitle("비밀번호 찾기")
         builder.setMessage("secure code를 입력하세요.")
 

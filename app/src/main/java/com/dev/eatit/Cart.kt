@@ -90,7 +90,6 @@ class Cart : AppCompatActivity() ,
         val ADDRESS_REQUEST_CODE = 1001
     }
 
-
     lateinit var edtAddress : TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -238,16 +237,25 @@ class Cart : AppCompatActivity() ,
             }
         })*/
 
-        edtAddress = order_address_comment.findViewById<TextView>(R.id.edtAddress)
+
+        edtAddress = order_address_comment.findViewById(R.id.edtAddress)
+        var btnGetAddress = order_address_comment.findViewById<Button>(R.id.btnGetAddress)
         var edtComment = order_address_comment.findViewById<MaterialEditText>(R.id.edtComment)
         var get_home_address = order_address_comment.findViewById<RadioButton>(R.id.get_home_address)
 
-        edtAddress.setOnClickListener(object : View.OnClickListener{
+        btnGetAddress.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
                 var intent = Intent(this@Cart, DaumAddressActivity::class.java)
                 startActivityForResult(intent, ADDRESS_REQUEST_CODE)
             }
         })
+
+        /*edtAddress.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                var intent = Intent(this@Cart, DaumAddressActivity::class.java)
+                startActivityForResult(intent, ADDRESS_REQUEST_CODE)
+            }
+        })*/
 
 
 

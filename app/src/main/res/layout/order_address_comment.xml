@@ -53,6 +53,7 @@
                             android:layout_weight="5"/>
 
                         <Button
+                            android:id="@+id/btnGetAddress"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:background="@drawable/round_button"

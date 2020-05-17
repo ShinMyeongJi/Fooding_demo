@@ -11,11 +11,13 @@
 
 
     <string name="menu">Menu</string>
-    <string name="orders">Orders</string>
-    <string name="cart">Cart</string>
+    <string name="orders">주문내역</string>
+    <string name="cart">장바구니</string>
+    <string name="changeHomeAdd">집 주소 변경</string>
+    <string name="changePassword">비밀번호 변경</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
-    <string name="logout">Logout</string>
+    <string name="logout">로그아웃</string>
     <string name="forgot_pwd">비밀번호 찾기</string>
 
     <string name="home_second">Home Second</string>
