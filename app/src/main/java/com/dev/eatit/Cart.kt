@@ -68,6 +68,7 @@ class Cart : AppCompatActivity() ,
 
     lateinit var rootLayout : RelativeLayout
     var shipAddress : Place? = null
+
     var placeFields = Arrays.asList(
         Place.Field.ID,
         Place.Field.NAME,
@@ -91,6 +92,9 @@ class Cart : AppCompatActivity() ,
     }
 
     lateinit var edtAddress : TextView
+    lateinit var shipLot : String
+    lateinit var shipLnt : String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
@@ -279,10 +283,11 @@ class Cart : AppCompatActivity() ,
                     txtTotal.text.toString(),
                     "0",
                     edtComment.text.toString(),
-                    String.format("%s, %s", shipAddress?.latLng?.latitude, shipAddress?.latLng?.longitude),
+                    String.format("%s, %s", shipLnt, shipLot),
                     cart
                 )
-                Toast.makeText(this@Cart, shipAddress?.latLng?.latitude.toString() + "," + shipAddress?.latLng?.longitude.toString(), Toast.LENGTH_LONG).show()
+                /*String.format("%s, %s", shipAddress?.latLng?.latitude, shipAddress?.latLng?.longitude),*/
+                Toast.makeText(this@Cart, shipLnt + "," + shipLot, Toast.LENGTH_LONG).show()
 
                 var order_number = System.currentTimeMillis().toString()
 
@@ -325,6 +330,8 @@ class Cart : AppCompatActivity() ,
         if (requestCode == ADDRESS_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 edtAddress.setText(data?.getStringExtra("address"))
+                shipLnt = data?.getStringExtra("lnt").toString()
+                shipLot = data?.getStringExtra("lot").toString()
             } else {   // RESULT_CANCEL
 
             }

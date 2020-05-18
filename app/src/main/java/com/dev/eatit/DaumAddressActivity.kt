@@ -81,11 +81,13 @@ class DaumAddressActivity : AppCompatActivity() {
 
     inner class AndroidBridge{
         @JavascriptInterface
-        fun setAddress(arg1: String, arg2 : String, arg3 : String){
+        fun setAddress(arg1: String, arg2 : String, arg3 : String, lot : String, lnt : String){ // 좌표 정보 추가
             handler.post(object : Runnable{
                 override fun run() {
                     var intent = Intent(this@DaumAddressActivity, MainActivity::class.java)
                     intent.putExtra("address", String.format("(%s) %s %s", arg1, arg2, arg3))
+                    intent.putExtra("lot", lot);
+                    intent.putExtra("lnt", lnt);
                     setResult(Activity.RESULT_OK, intent)
                     init_webView()
                     finish()
