@@ -8,6 +8,7 @@ import android.os.Build
 import com.dev.eatit.model.User
 import com.dev.eatit.remote.ApiService
 import com.dev.eatit.remote.RetrofitClient
+import com.facebook.AccessToken
 import retrofit2.Retrofit
 
 class Common {
@@ -53,7 +54,6 @@ class Common {
                 return networkInfo.isConnected
             }
 
-
            /* if(connectivityManager != null){
                 var info = connectivityManager.allNetworkInfo as Array
                 if(info != null){
@@ -64,6 +64,12 @@ class Common {
                     }
                 }
             }*/
+        }
+
+        @JvmStatic fun checkLoginFacebook() : Boolean{
+            var accessToken = AccessToken.getCurrentAccessToken()
+            if(accessToken != null) return true
+            else return false
         }
     }
 

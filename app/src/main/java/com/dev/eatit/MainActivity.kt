@@ -88,7 +88,6 @@ class MainActivity : AppCompatActivity() {
                 currentAccessToken: AccessToken?
             ) {
                 if(currentAccessToken == null){
-                    Toast.makeText(this@MainActivity, "logout", Toast.LENGTH_SHORT).show()
                     mFirebaseaAuth.signOut()
                     LoginManager.getInstance().logOut();
                 }

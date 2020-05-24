@@ -36,11 +36,13 @@ import com.dev.eatit.common.Common
 import com.dev.eatit.model.Banner
 import com.dev.eatit.model.Category
 import com.dev.eatit.model.Token
+import com.facebook.login.LoginManager
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
@@ -68,6 +70,8 @@ class Home : AppCompatActivity() {
     lateinit var imageSlider : ImageSlider
 
     var adapter: FirebaseRecyclerAdapter<Category, MenuViewHolder>? = null
+
+    var mFirebaseaAuth : FirebaseAuth = FirebaseAuth.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
          super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -198,12 +202,20 @@ class Home : AppCompatActivity() {
                 }else if(id == R.id.nav_setting){
                     showSettingDialog()
                 }else if(id == R.id.logout){
-                    //자동 로그인 해제
-                    Paper.book().destroy()
+                    if(Common.checkLoginFacebook() == true){
+                        mFirebaseaAuth.signOut()
+                        LoginManager.getInstance().logOut();
+                        var mainIntent = Intent(this@Home, MainActivity::class.java)
+                        startActivity(mainIntent)
+                        finish()
+                    }else {
+                        //자동 로그인 해제
+                        Paper.book().destroy()
 
-                    var signIn = Intent(this@Home, SignIn::class.java)
-                    signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    startActivity(signIn)
+                        var signIn = Intent(this@Home, SignIn::class.java)
+                        signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        startActivity(signIn)
+                    }
                 }
 
                 var drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
