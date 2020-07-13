@@ -121,6 +121,18 @@ class MainActivity : AppCompatActivity() {
                 login(user, pwd)
             }
         }
+
+        if(Common.checkLoginFacebook() == true){
+            var user = mFirebaseaAuth.currentUser
+            var buildUser = User(user?.displayName, null, null)
+            buildUser.phone = user?.uid!!
+
+            Common.currentUser = buildUser
+
+            var homeIntent = Intent(this@MainActivity, RestaurantList::class.java)
+            startActivity(homeIntent)
+            finish()
+        }
     }
 
     private fun handleFacebookToken(token : AccessToken){
