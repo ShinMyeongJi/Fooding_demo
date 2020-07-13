@@ -14,3 +14,11 @@
 * minSdkVersion 21
 * targetSdkVersion 29
 
+## Screen Shot
+* Fooding Client
+![Image of MJ](https://github.com/ShinMyeongJi/Images/blob/master/fooding_client_demo/1.PNG?raw=true)
+
+
+* Fooding Manager
+
+![Image of MJ](https://github.com/ShinMyeongJi/Images/blob/master/fooding_client_demo/2.PNG?raw=true)
