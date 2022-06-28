@@ -16,9 +16,9 @@
 
 ## Screen Shot
 * Fooding Client
-![Image of MJ](https://github.com/ShinMyeongJi/Images/blob/master/fooding_client_demo/1.PNG?raw=true)
+![image](https://user-images.githubusercontent.com/31172248/176183192-7b42c8b3-fd47-45ff-8e14-51299e8c446a.png)
 
 
 * Fooding Manager
 
-![Image of MJ](https://github.com/ShinMyeongJi/Images/blob/master/fooding_client_demo/2.PNG?raw=true)
+![image](https://user-images.githubusercontent.com/31172248/176183231-80973117-71b0-4e55-98fd-6581a1c70c29.png)
